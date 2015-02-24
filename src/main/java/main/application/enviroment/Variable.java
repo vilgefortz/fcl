@@ -1,12 +1,16 @@
 package main.application.enviroment;
 
-import java.util.Observable;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gson.annotations.Expose;
 
-public class Variable extends Observable{
+public class Variable implements Serializable{
+	private static final long serialVersionUID = 2893037691069542080L;
 	private static final Logger log = Logger.getLogger( Variable.class.getName() );
+	private List<Observer> observers = new ArrayList<Observer> ();
 	@Expose
 	private String name = "";
 	public String getName() {
@@ -18,13 +22,22 @@ public class Variable extends Observable{
 		this.notifyObservers(this);
 	}
 
+	private void notifyObservers(Variable variable) {
+		observers.forEach(o -> {o.notify (this);});		
+	}
+	public void addObserver (Observer o) {
+		this.observers.add(o);
+	}
+
 	public double getValue() {
 		return value;
 	}
 
 	public void setValue(double value) {
-		this.value = value;
-		this.notifyObservers(this);
+		if (this.value != value) {
+			this.value=value;
+			this.notifyObservers(this);
+		};
 	}
 	@Expose
 	private double value = 0;
@@ -42,6 +55,10 @@ public class Variable extends Observable{
 		log.fine((new StringBuilder("Creating variable ")).append(name).append(" with value ").append(this.value).toString());
 		this.name = name;
 		this.value= value;
+	}
+
+	public void forceCalc() {
+		this.notifyObservers(this);
 	}
 }
 

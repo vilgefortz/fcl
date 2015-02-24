@@ -2,6 +2,7 @@ package main.application.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import main.application.Application;
 import main.application.enviroment.Enviroment;
 import main.application.parser.Parser;
 
@@ -25,7 +27,7 @@ public class Gateway extends HttpServlet {
 	 */
 	public Gateway() {
 		super();
-		// TODO Auto-generated constructor stub
+		//
 	}
 
 	/**
@@ -44,58 +46,36 @@ public class Gateway extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		PrintWriter pw = response.getWriter();
 		String action = request.getParameter("action");
 		if (action.equalsIgnoreCase("generateJson")) {
-			HttpSession session = request.getSession();
-			PrintWriter pw = response.getWriter();
 			String body = request.getParameter("data");
 			Parser p = new Parser(body);
 			
 			Enviroment env = (Enviroment) session.getAttribute("env");
-			if (env == null) {
-				env=new Enviroment();
-			}
-			p.setEnviroment(env);
 			p.parse();
+			if (env == null) env = p.app.getEnv();
+			p.setEnviroment(env);
 			session.setAttribute("app", p.app);
 			pw.write(p.app.toJson());
 			return;
 		}
+		if (action.equalsIgnoreCase("setVariable")) {
+			Application app = (Application) session.getAttribute("app");
+			if (app==null) {
+				pw.write("null");
+				return;
+			}
+			String varName = request.getParameter("name");
+			String value = request.getParameter("value");
+			double val = Double.parseDouble(value);
+			app.getEnv().getVariable(varName).setValue(val);
+			session.setAttribute("app", app);
+			session.setAttribute("env", app.getEnv());
+			pw.write(app.toJson());
+			return;
+		}
 	}
-
-//	protected String getBodyContent(HttpServletRequest request)
-//			throws IOException {
-//		String body = null;
-//		StringBuilder stringBuilder = new StringBuilder();
-//		BufferedReader bufferedReader = null;
-//
-//		try {
-//			InputStream inputStream = request.getInputStream();
-//			if (inputStream != null) {
-//				bufferedReader = new BufferedReader(new InputStreamReader(
-//						inputStream));
-//				char[] charBuffer = new char[128];
-//				int bytesRead = -1;
-//				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-//					stringBuilder.append(charBuffer, 0, bytesRead);
-//				}
-//			} else {
-//				stringBuilder.append("");
-//			}
-//		} catch (IOException ex) {
-//			throw ex;
-//		} finally {
-//			if (bufferedReader != null) {
-//				try {
-//					bufferedReader.close();
-//				} catch (IOException ex) {
-//					throw ex;
-//				}
-//			}
-//		}
-//
-//		return stringBuilder.toString();
-//
-//	}
 
 }

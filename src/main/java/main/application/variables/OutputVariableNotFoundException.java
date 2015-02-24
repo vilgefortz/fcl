@@ -1,7 +1,14 @@
 package main.application.variables;
 
 public class OutputVariableNotFoundException extends Exception {
+	
 	public OutputVariableNotFoundException(String name) {
-		super ("Output variable \"" + name + "\" not found");
+		this.name = name;
 	}	
+	protected String name;
+	@Override
+	public String getMessage() {
+	
+		return "Output variable not found : '" + name + "'";
+	}
 }

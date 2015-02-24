@@ -6,27 +6,41 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.application.Application;
+import main.application.enviroment.Enviroment;
+import main.application.enviroment.Variable;
 
 public class ParserBase {
 
 	public String document;
 	public char[] doc;
-	public int pointer = 0;
+	protected int pointer = 0;
+	public int getPointer() {
+		return pointer;
+	}
+
+	public void setPointer(int pointer) {
+		this.pointer = pointer;
+	}
+
 	public Application app = new Application();
 	public boolean done = false;
 	public String word;
 	public JsonLogger logger = new JsonLogger();
 	public boolean fatalState;
+	private int lastPointer;
 
+	{
+		this.app.setParser (this);
+	}
 	public ParserBase() {
-		super();
+		
 	}
 
 	public void logInfo(String exp, String found) {
 		int line = countLines(pointer);
 		int linepos = this.countLinepos(pointer);
 		String info = "Info: Expected '" + exp + "', found '" + found
-				+ "' at line : " + line + ", pos : " + linepos;
+				+ "'";
 		logger.info.add(new LogEntry(info, line, pointer, linepos));
 		log(info);
 	}
@@ -48,7 +62,7 @@ public class ParserBase {
 		int line = countLines(pointer);
 		int linepos = this.countLinepos(pointer);
 		String info = "Fatal: Expected '" + exp + "', found '" + found
-				+ "' at line : " + line + ", pos : " + linepos;
+				+ "'";
 		logger.fatal.add(new LogEntry(info, line, pointer, linepos));
 		log(info);
 	}
@@ -58,6 +72,7 @@ public class ParserBase {
 	}
 
 	public ParserAction expectReg(String regex, String logname) {
+		lastPointer=pointer;
 		int temp = pointer;
 		regex = "(?is)^" + regex;
 		moveOnTrailing();
@@ -76,6 +91,7 @@ public class ParserBase {
 	}
 
 	public ParserAction expect(String S) {
+		lastPointer=pointer;
 		int temp = pointer;
 		moveOnTrailing();
 		this.word = S;
@@ -91,9 +107,8 @@ public class ParserBase {
 		return action;
 	}
 
-	private ParserAction expectRegForce(String reg, String logname) {
+	protected ParserAction expectRegForce(String reg, String logname) {
 		ParserAction pc = this.expectReg(reg, logname);
-		int line = this.countLines(pointer);
 		if (!pc.isFound())
 			logFatal(logname, this.word.equals("") ? this.getFirstText()
 					: this.word);
@@ -102,6 +117,7 @@ public class ParserBase {
 	}
 
 	private String getFirstText() {
+		lastPointer=pointer;
 		StringBuilder b = new StringBuilder();
 		this.moveOnTrailing();
 		for (int i = pointer; i < doc.length; i++) {
@@ -170,18 +186,33 @@ public class ParserBase {
 		return pa;
 	}
 
+	public ParserAction expectWordOrNumberForce(String name) {
+		ParserAction pa = expectWordOrNumber(name);
+		if (!pa.isFound()) {
+			logFatal(name, this.getFirstText());
+		}
+		return pa;
+	}
 	public ParserAction expectWord(String name) {
+		lastPointer=pointer;
 		return this.expectReg("[a-z][a-z0-9_]*", name);
+	}
+	public ParserAction expectWordOrNumber(String name) {
+		lastPointer=pointer;
+		return this.expectReg("[a-z0-9_]+", name);
 	}
 
 	private String implode(String connector, String[] list) {
+		if (list.length==0) return "";
+		
 		StringBuilder sb = new StringBuilder();
 		for (String l : list) {
 			sb.append(l).append(connector);
 		}
 		String result = sb.toString();
-		return result.substring(result.length() - connector.length(),
-				result.length());
+		Logger.getGlobal().info("IN IMPLODE : " + result);
+		return result.substring(0,
+				result.length() - connector.length());
 	}
 
 	protected ParserAction expectOneOfForce(String[] words, String name) {
@@ -196,6 +227,7 @@ public class ParserBase {
 	}
 
 	private ParserAction expectOneOf(String[] words, String name) {
+		lastPointer=pointer;
 		int temp = pointer;
 		boolean found = false;
 		moveOnTrailing();
@@ -216,6 +248,65 @@ public class ParserBase {
 		if (!found)
 			pointer = temp;
 		return action;
+	}
+
+	protected void logFatal(String string) {
+		this.fatalState=true;
+		this.logger.fatal.add(new LogEntry (string, this.countLines(pointer), pointer, this.countLinepos(pointer)));
+		
+	}
+
+	protected ParserAction expectEof() {
+		lastPointer=pointer;
+		this.moveOnTrailing();
+		ParserAction pa = new ParserAction (this, pointer,pointer>=doc.length-1);
+		return pa;
+	}
+
+	public String[] getKeywords() {
+		String [] keywords = new String [] {
+				"function_block", "end_function_block", "var_input", "var_output", "end_var",
+				"fuzzify", "end_fuzzify", "defuzzify", "end_defuzzify"
+			};
+		return keywords;
+	}
+
+	public boolean isKeyword(String word) {		
+		String [] keywords = this.getKeywords();
+		for (String k : keywords) {
+			if (k.equalsIgnoreCase(word)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void setEnviroment(Enviroment env) {
+		for (Variable v : env) {
+			this.app.getEnv().getVariable(v.getName()).setValue(v.getValue());
+		}
+		for (Variable v : this.app.getEnv()) {
+			v.forceCalc();
+		}
+ 	}
+
+	public String hasKeyword(String word) {
+		String w = null;
+		int pos = word.length()+1;
+		for (String k : this.getKeywords()) {
+			if (word.toLowerCase().contains(k)){
+				int newpos = pos;
+				if ((newpos = word.toLowerCase().indexOf(k))< pos) {
+					pos=newpos;
+					w=k;
+				}
+			};
+		}
+		return w;
+	}
+	public void rollbackPointer() {
+		Logger.getGlobal().info("Rolling back pointer : old=" + pointer+ ", new=" + lastPointer + ".");
+		this.pointer = this.lastPointer;
 	}
 
 }

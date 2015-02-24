@@ -1,19 +1,18 @@
 package main.application.variables;
 
+import java.io.Serializable;
+
 import main.application.functionblock.FunctionBlock;
 
-public class InputVariable extends BaseFunctionVariable {
-	public InputVariable(FunctionBlock fb) {
-		this.fb = fb;
-	}
+public class InputVariable extends BaseFunctionVariable implements Serializable{
+
+	private static final long serialVersionUID = -4390349344965618303L;
 
 	public InputVariable(String name) {
-		this.name = name;
+		super (name,null);
 	}
 
 	public InputVariable(String name, FunctionBlock fb) {
-		this.name = name;
-		this.fb = fb;
-		this.var = this.fb.getEnv().getVariable(name);
+		super (name,fb);
 	}
 }
