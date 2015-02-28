@@ -9,8 +9,7 @@ public class SingletonTerm extends Term {
 
 	@Expose
 	private String jsfunction;
-	@Expose
-	private double point;
+	@Expose public double point;
 
 	public SingletonTerm(String termName, String definition) throws TermDeclarationErrorException {
 		super(termName);

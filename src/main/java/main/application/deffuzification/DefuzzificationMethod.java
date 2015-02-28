@@ -2,6 +2,7 @@ package main.application.deffuzification;
 
 import java.util.List;
 
+import main.application.accumulation.AccumulationMethod;
 import main.application.variable.term.Term;
 import main.application.variables.OutputVariable;
 
@@ -20,13 +21,15 @@ public abstract class DefuzzificationMethod {
 	public boolean equals(Object obj) {
 		return this.name.equalsIgnoreCase(((DefuzzificationMethod)obj).name);
 	}
-	public abstract double calculate(Term first, List<Term> acculist, OutputVariable outputVariable);
+	
 	public static DefuzzificationMethod getDummy(String method) {
 		return new DefuzzificationMethod(method) {
 			@Override
-			public double calculate(Term first, List<Term> acculist, OutputVariable outputVariable) {
+			public double calculate(Term first, List<Term> acculist, OutputVariable outputVariable, AccumulationMethod accuMethod) {
 				return Double.NaN;
 			}
 		};
 	}
+	public abstract double calculate(Term first, List<Term> acculist,
+			OutputVariable outputVariable, AccumulationMethod accuMethod);
 }

@@ -18,6 +18,11 @@ public class CutTerm extends Term {
 		}
 		
 		@Override
+		public Term getBaseTerm() {
+			return this.term;
+		}
+		
+		@Override
 		public double fun(double val) {
 			return Math.min(term.fun(val),level);
 		}

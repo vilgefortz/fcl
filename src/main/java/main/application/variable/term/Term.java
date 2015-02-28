@@ -17,6 +17,10 @@ public abstract class Term {
 		this.name=name;
 	}
 	
+	public Term getBaseTerm () {
+		return this;
+	}
+	
 	@Override
 	public boolean equals(Object arg0) {
 		Term t=(Term)arg0;

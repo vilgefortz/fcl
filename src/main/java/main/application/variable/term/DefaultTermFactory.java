@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 
 import main.application.Application;
 import main.application.parser.utils.ParsingUtils;
+import main.application.variable.term.types.Point;
+import main.application.variable.term.types.PointsTerm;
 import main.application.variable.term.types.SingletonTerm;
 
 public class DefaultTermFactory extends TermFactory {

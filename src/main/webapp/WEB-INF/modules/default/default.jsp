@@ -76,9 +76,7 @@ input {
 <script src="scripts/lib/ace/src-noconflict/ace.js"
 	type="text/javascript" charset="utf-8"></script>
 <script>
-var refreshInfoDiv = function (value) {
-	$("#code").text(value);
-};
+
 	var mainData;
 	var refreshVariableInput = function () {
 		var env = mainData.enviroment;
@@ -115,13 +113,11 @@ var refreshInfoDiv = function (value) {
 					}
 					var app = $.parseJSON(data);
 					mainData = app;
-					//refreshVariableInput();
 					var env = app.enviroment;
 					$.each(env, function(key, value) {
 						if (value.value !== $("#var-" + key).val())
 							$("#var-" + key).val(value.value);
 					});
-					refreshInfoDiv(data);
 				});
 			}, 1500);
 		});
@@ -129,30 +125,14 @@ var refreshInfoDiv = function (value) {
 	var reloadEditor = function () {
 		$.post("Gateway?action=generateJson", {
 			data : editor.getSession().getValue()
-		}, function(value) {
-
-			refreshInfoDiv(value);
+		}, function(value) {	
 			var app = $.parseJSON(value);
 			mainData = app;
 			refreshVariableInput();
-			$("#fatal").text("");
-			$("#log").text("");
-			$("#log").append("Fatal:<br>");
-			$.each(app.logger.fatal, function(key, value) {
-
-				$("#fatal").append(
-						value.entry + ", at line : "
-								+ value.line + " cursor pos : "
-								+ value.linepos + "<br>");
-			});
-			$("#log").append("Info:<br>");
-			$.each(app.logger.info, function(key, value) {
-				$("#log").append(value.entry + "<br>");
-			});
 		});
 		editNotification = false;
 
-	}
+	};
 	var editNotification = false;
 	var editor = ace.edit("editor");
 	editor.setTheme("ace/theme/monokai");
@@ -163,8 +143,33 @@ var refreshInfoDiv = function (value) {
 					editNotification = true;
 					window.setTimeout(function() {
 						reloadEditor();
+						window.setTimeout (function () {
+						highlightError();
+						},200);
 						}, 1000);
 				}
 			});
+	var errorMsg=null;
+	function highlightError(errorMsg, line){
+		 errorMsg = mainData.logger.fatal[0];
+		/*$.each(app.logger.fatal, function(key, value) {
+			
+			$("#fatal").append(
+					value.entry + ", at line : "
+							+ value.line + " cursor pos : "
+							+ value.linepos + "<br>");
+		});*/
+		if (errorMsg==undefined || errorMsg==null ) errorMsg = {
+			line:-1,
+			entry:"",
+			linepos:-1
+		};
+		editor.getSession().setAnnotations([{
+		    row: (errorMsg.line - 1),
+		    column: errorMsg.linepos,
+		    text: errorMsg.entry,
+		    type: "error" // also warning and information
+		}]);
+	};
 </script>
 

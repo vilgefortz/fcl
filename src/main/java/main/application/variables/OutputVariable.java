@@ -60,7 +60,7 @@ public class OutputVariable extends BaseFunctionVariable  {
 			first = this.accuMethod.accumulate(first, acculist.get(i));
 		}
 		l.info ("accu list size : " + acculist.size());
-		this.setValue(this.deffMethod.calculate(first,acculist,this));
+		this.setValue(this.deffMethod.calculate(first,acculist,this,this.accuMethod));
 		this.oldAccuList = new ArrayList<Term> (acculist);
 		this.oldAccuTerm = first;
 		acculist.clear();
