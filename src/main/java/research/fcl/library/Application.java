@@ -42,17 +42,6 @@ public class Application {
 	public static void main (String [] args) throws FileNotFoundException {
 		Parser p = new Parser(new File ("test.fcl"));
 		p.parse();
-		System.out.println(p.app.toJson());
-		
-	}
-	public String toJson() throws FileNotFoundException {
-		
-			Gson gson = new GsonBuilder().
-					excludeFieldsWithoutExposeAnnotation().
-					setPrettyPrinting().
-					create();
-		 return gson.toJson(this);
-		
 		
 	}
 	public Enviroment getEnv() {

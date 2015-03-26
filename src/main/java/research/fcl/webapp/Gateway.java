@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import research.fcl.library.Application;
 import research.fcl.library.enviroment.Enviroment;
 import research.fcl.library.parser.Parser;
 
@@ -44,37 +43,19 @@ public class Gateway extends HttpServlet {
 	 *      response)
 	 */
 	protected void doPost(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
+		HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		PrintWriter pw = response.getWriter();
-		String action = request.getParameter("action");
-		if (action.equalsIgnoreCase("generateJson")) {
-			String body = request.getParameter("data");
-			Parser p = new Parser(body);
-			
-			Enviroment env = (Enviroment) session.getAttribute("env");
-			p.parse();
-			if (env == null) env = p.app.getEnv();
-			p.setEnviroment(env);
-			session.setAttribute("app", p.app);
-			pw.write(p.app.toJson());
-			return;
-		}
-		if (action.equalsIgnoreCase("setVariable")) {
-			Application app = (Application) session.getAttribute("app");
-			if (app==null) {
-				pw.write("null");
-				return;
-			}
-			String varName = request.getParameter("name");
-			String value = request.getParameter("value");
-			double val = Double.parseDouble(value);
-			app.getEnv().getVariable(varName).setValue(val);
-			session.setAttribute("app", app);
-			session.setAttribute("env", app.getEnv());
-			pw.write(app.toJson());
-			return;
-		}
+		String body = request.getParameter("data");
+		Parser p = new Parser(body);
+		Enviroment env = (Enviroment) session.getAttribute("env");
+		p.parse();
+		if (env == null)
+			env = p.app.getEnv();
+		p.setEnviroment(env);
+		session.setAttribute("app", p.app);
+		pw.write("1");
+		return;
 	}
 
 }

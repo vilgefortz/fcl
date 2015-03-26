@@ -1,3 +1,4 @@
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/dto/DefaultGsonMapper.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/deffuzification/DeffuzzificationMethodNotRecognisedException.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variables/OutputVariables.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/accumulation/AccumulationMethodNotRecognisedException.java
@@ -7,6 +8,7 @@
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/enviroment/Observer.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variables/InlineVariable.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/enviroment/Variable.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/Variables.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/Term.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/Gateway.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/TermGenerator.java
@@ -43,6 +45,7 @@
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/rules/Effect.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/enviroment/VariableSet.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/rules/CutTerm.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/ApplicationResponseAction.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/enviroment/Enviroment.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variables/BaseFunctionVariable.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/TermFactory.java
@@ -51,7 +54,9 @@
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/TermDefinitionHasKeywordException.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/parser/ApplcationConfig.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/parser/utils/ParsingUtils.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/LoggerEndpoint.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/functionblock/FunctionBlock.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/App.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/andmethods/AndMethod.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/deffuzification/DefaultDeffuzificationMethods.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/parser/Config.java
