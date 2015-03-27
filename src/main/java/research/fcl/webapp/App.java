@@ -57,7 +57,7 @@ public class App extends HttpServlet {
 		}
 		Map<String,ApplicationResponseAction> dispatchMap = new HashMap<String,ApplicationResponseAction> ();
 		dispatchMap.put ("setVariable", Variables::setVariable);
-		dispatchMap.put ("errorLog", LoggerEndpoint::getErrorLog);
+		dispatchMap.put ("getErrorLog", LoggerEndpoint::getErrorLog);
 		dispatchMap.put ("getEnviroment", Variables::getEnviroment);
 		
 		ApplicationResponseAction action = dispatchMap.get(actionString);

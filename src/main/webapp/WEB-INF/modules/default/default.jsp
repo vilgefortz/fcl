@@ -1,14 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <style>
-#editor {
-	height: 400px;
-	position: relative;
+#editor { 
+	position: absolute; 
+	top: 40px; 
+	padding: 5px; 
+	left:0; 
+	bottom:0; 
+	right: 0; 
 }
-
 #log {
 	position:relative;	
 }
+#resizable { 
+	min-width: 500px; 
+	min-height: 500px; 
+	max-width: 100%;
+	max-height: 100%; 
+	padding: 5px; 
+	border: 3px solid red
+}
+
 input {
 	color:#000000;
 }
@@ -16,7 +28,7 @@ input {
 
 <div class="row">
 	<div class="col-md-8 editor">
-		<div id="fatal"><br></div>
+		<div id="resizable">
 		<div id="editor">		
 /* aplikacja 
 do 
@@ -61,7 +73,9 @@ FUNCTION_BLOCK Fuzzy_FB
 		RULE 3 : IF pressure IS low THEN test IS closed;
 		RULE 4 : IF temp IS hot AND pressure IS high THEN valve IS drainage;
 	END_RULEBLOCK                
-END_FUNCTION_BLOCK 
+END_FUNCTION_BLOCK
+ 
+</div>
 </div>
 <div id="varDiv"></div>
 	</div>
@@ -75,14 +89,22 @@ END_FUNCTION_BLOCK
 	<div id="log" class="col-md-8"></div>
 </div>
 
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script src="scripts/lib/ace/src-noconflict/ace.js"
 	type="text/javascript" charset="utf-8"></script>
-<script>
 	
+<script>
+	$( "#resizable" ).resizable();
 	var mainData;
 	var env;
-	var refreshVariableInput = function () {
-		var env = 
+	var refreshEnviromentData = function (callback) {
+		$.post ("App?action=getEnviroment",null,function (data) {
+			env=$.parseJSON(data);
+			refreshVariableDiv();
+			if (callback) callback ();
+		}); 
+	};
+	var refreshVariableDiv = function () {
 		$("#varDiv").text("");
 		var text = "Variables :<br>";
 		$.each (env, function(key,value) {
@@ -91,7 +113,6 @@ END_FUNCTION_BLOCK
 		});
 		var changingVariable;
 		$("#varDiv").append(text);
-
 	$(".variable-input").keyup(function() {
 			if (changingVariable!=null) return;
 			changingVariable = this;
@@ -105,28 +126,33 @@ END_FUNCTION_BLOCK
 				if (val === env[id].value)
 					return;
 				var name = env[id].name;
-				$.post("Gateway?action=setVariable", {
+				$.post("App?action=setVariable", {
 					"name" : name,
 					"value" : val
 				}, function(data) {
 					if (data=="null") {
 						reloadEditor();
 					}
-					var app = $.parseJSON(data);
-					mainData = app;
-					var env = app.enviroment;
-					$.each(env, function(key, value) {
-						if (value.value !== $("#var-" + key).val())
-							$("#var-" + key).val(value.value);
+					else {
+						refreshVariables();
+					}
 					});
-				});
+			
 			}, 1500);
+		});
+	};
+	var refreshVariables = function () {
+		refreshEnviromentData (function () { 
+			$.each(env, function(key, value) {
+				if (value.value !== $("#var-" + key).val())
+				$("#var-" + key).val(value.value);
+			});	
 		});
 	};
 	
 	var refreshIDE = function () {
-		refreshVariableInput();	
-		highlightError();
+		refreshEnviromentData();	
+		getErrors();
 	}
 	
 	var reloadEditor = function () {
@@ -149,22 +175,22 @@ END_FUNCTION_BLOCK
 					window.setTimeout(function() {
 						reloadEditor();
 						window.setTimeout (function () {
-						highlightError();
+						getErrors();
 						},200);
 						}, 1000);
 				}
 			});
+	var errors = null;
 	var errorMsg=null;
-
-	function highlightError(errorMsg, line){
-		 errorMsg = mainData.logger.fatal[0];
-		/*$.each(app.logger.fatal, function(key, value) {
-			
-			$("#fatal").append(
-					value.entry + ", at line : "
-							+ value.line + " cursor pos : "
-							+ value.linepos + "<br>");
-		});*/
+	function getErrors (callback) {
+		$.post ("App?action=getErrorLog",null,function (data) {
+			errors=$.parseJSON(data);
+			highlightError();
+			if (callback) callback ();
+		});
+	}
+	function highlightError(){
+		 errorMsg = errors[0];
 		if (errorMsg==undefined || errorMsg==null ) errorMsg = {
 			line:-1,
 			entry:"",

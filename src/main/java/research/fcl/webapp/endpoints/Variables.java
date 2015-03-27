@@ -31,6 +31,9 @@ public class Variables {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "false";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "false";	
 		}
 	}
 	public static String getEnviroment(HttpServletRequest request,
