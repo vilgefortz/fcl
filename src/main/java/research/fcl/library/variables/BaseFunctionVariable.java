@@ -18,9 +18,19 @@ import com.google.gson.annotations.Expose;
 
 public class BaseFunctionVariable implements Observer,Serializable {
 
-	/**
-	 * 
-	 */
+	@Override
+	public String toString() {
+		return new StringBuilder().
+				append(this.getName()).
+				append(" : ").
+				append(this.type).
+				append(" [").
+				append(this.getMin()).
+				append("..").
+				append(this.getMax()).
+				append("]").
+				toString();
+	}
 	private static final long serialVersionUID = 6809124754964817287L;
 	protected FunctionBlock fb;
 	protected String name;
@@ -153,6 +163,10 @@ public class BaseFunctionVariable implements Observer,Serializable {
 
 	public double getMax() {
 		return max;
+	}
+
+	public List<Term> getTerms() {
+		return this.terms;
 	}
 
 }

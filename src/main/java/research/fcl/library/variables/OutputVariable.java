@@ -65,4 +65,9 @@ public class OutputVariable extends BaseFunctionVariable  {
 		acculist.clear();
 	}
 //	
+
+	public FunctionBlock getFunctionBlock() {
+		return this.fb;
+		
+	}
 }

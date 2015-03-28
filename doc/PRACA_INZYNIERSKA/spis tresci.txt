@@ -1,0 +1,43 @@
+Modelowanie struktur blokowych systemów rozmytych za pomoc¹ jêzyka Fuzzy Control Language
+
+
+Spis treœci
+
+Wstêp
+
+I. Podstawy teorii modelowania systemów rozmytych
+1. Regu³y sterownika rozmytego
+2. Bloki i proces wnioskowania rozmytego
+2.1. Blok rozmywania
+2.2. Blok i metody wnioskowania
+2.3. Blok i metody wyostrzania
+3. Przyk³ad wnioskowania rozmytego
+
+II. Modelowanie rozmyte, przyk³ady
+//tutaj jakies przykladowe modele (np Mamdaniego, Rozmyte sieci neuronowe)
+
+III. Opis sk³adni jêzyka Fuzzy Control Language
+1. IEC 61131-7
+2. Blok funkcji
+3. Blok zmiennych
+4. Blok regu³
+
+IV. Szczegó³y implementacji sterownika FCL
+1. Szczegó³y implementacji klas sterownika
+2. Sposób reprezentacji systemu rozmytego w strukturze klas w Javie
+2.1 Klasa zmiennej, termu i reguly
+2.2 Klasa bloku funkcji
+3. Mo¿liwoœci rozwoju funkcji jêzyka.
+3.1 Klasy metod tworzenia termów
+3.2 Klasy modyfikatorów
+3.3 Klasy operatorów, metod defuzyfikacji, koniunkcji, alternatywy i akumulacji
+
+IV. Eksperymenty i wnioski
+1. Modelowanie przyk³adowej funkcji (brak pomys³u)
+2. Modelowanie prostego systemu (brak pomys³u)
+3. Podsumowanie
+
+Za³¹czniki:
+A: IEC 61131-7
+
+Bibliografia

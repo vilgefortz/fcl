@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import research.fcl.library.Application;
 import research.fcl.webapp.endpoints.LoggerEndpoint;
 import research.fcl.webapp.endpoints.Variables;
+import research.fcl.webapp.endpoints.Tree;
 
 /**
  * Servlet implementation class Gateway
@@ -59,6 +60,7 @@ public class App extends HttpServlet {
 		dispatchMap.put ("setVariable", Variables::setVariable);
 		dispatchMap.put ("getErrorLog", LoggerEndpoint::getErrorLog);
 		dispatchMap.put ("getEnviroment", Variables::getEnviroment);
+		dispatchMap.put ("getTreeData", Tree::getTreeData);
 		
 		ApplicationResponseAction action = dispatchMap.get(actionString);
 		if (action != null) pw.write(action.action(request, response, app));

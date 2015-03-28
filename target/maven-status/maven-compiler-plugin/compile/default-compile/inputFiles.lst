@@ -11,8 +11,10 @@
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/Variables.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/Term.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/Gateway.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/mapper/tree/JsTreeNode.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/TermGenerator.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/accumulation/MaxMethod.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/mapper/tree/HtmlAttributes.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variables/Variable.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variables/InputVariables.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/rules/AndAction.java
@@ -37,6 +39,7 @@
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/deffuzification/DefuzzificationMethod.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/TermDeclarationErrorException.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/rules/NormalEffect.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/mapper/tree/JsTreeNodeMapper.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/parser/ParserBase.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/types/TraingleSingleton.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/accumulation/AccumulationMethod.java
@@ -73,5 +76,6 @@
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/functionblock/Ruleblock.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/parser/JsonLogger.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/TermDefinitionNotRecognisedException.java
+/home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/webapp/endpoints/Tree.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/variable/term/types/PointsTerm.java
 /home/vilgefortz/workspace_ee/fcl/src/main/java/research/fcl/library/parser/ParserAction.java
