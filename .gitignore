@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 nb-configuration.xml
 .project
 target/
 .settings/
 bin/
+=======
+/target
+target
+.settings/*
+!.settings/.jsdtscope
+.project
+>>>>>>> f94d46da2f24fd8ab3c8ec48949720fdffc6f81b
 .classpath
