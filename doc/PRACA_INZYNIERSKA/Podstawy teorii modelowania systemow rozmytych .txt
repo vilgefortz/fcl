@@ -1,1 +1,0 @@
-Sterownik systemu rozmytego (ang. fuzzy controller) z matematycznego punktu widzenia modeluje aproksymację pewnej funkcji która jest realizowana przez rzeczywisty system. Z tego względu znajduje najczęściej zastosowanie w sterowaniu. 
