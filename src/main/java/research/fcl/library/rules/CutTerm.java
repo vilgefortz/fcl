@@ -34,6 +34,11 @@ public class CutTerm extends Term {
 		public double getMin() {
 			
 			return term.getMin();
+		}
+
+		@Override
+		public double[] getImportantPoints() {
+			return term.getImportantPoints();
 		};
 
 }

@@ -7,6 +7,7 @@ import research.fcl.library.functionblock.Ruleblock;
 import research.fcl.library.variables.InlineVariableNotFoundException;
 import research.fcl.library.variables.InputVariableNotFoundException;
 import research.fcl.library.variables.OutputVariableNotFoundException;
+import research.fcl.library.variables.TermNotFoundException;
 
 
 public class DefaultRuleFactory {
@@ -19,7 +20,7 @@ public class DefaultRuleFactory {
 		this.actionFactory = new DefaultActionFactory(this.ruleblock);
 		this.effectFactory = new DefaultEffectFactory(this.ruleblock);
 	}
-	public Rule fromString(String name, String rule) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, OutputVariableNotFoundException {
+	public Rule fromString(String name, String rule) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, OutputVariableNotFoundException, TermNotFoundException {
 		Rule r = new Rule (name,rule); 
 		
 		//remove semicolon from end;
@@ -35,13 +36,13 @@ public class DefaultRuleFactory {
 		return r;
 	}
 
-	private Effect parseEffect(String text, Rule r, List<Effect> effect) throws OutputVariableNotFoundException, RuleParsingException {
+	private Effect parseEffect(String text, Rule r, List<Effect> effect) throws OutputVariableNotFoundException, RuleParsingException, TermNotFoundException {
 
 		Effect e = this.effectFactory.createEffect(text,r,effect);
 		return e;
 	}
 
-	private Cause parseCause(String text, Rule r) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException {
+	private Cause parseCause(String text, Rule r) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, TermNotFoundException {
 		
 		Cause c = new Cause ();
 		c.action = this.actionFactory.createAction(text,r);

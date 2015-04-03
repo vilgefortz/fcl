@@ -47,4 +47,9 @@ public class TraingleSingleton extends Term {
 		return pt.fun(val);
 	}
 
+	@Override
+	public double[] getImportantPoints() {
+		return pt.getImportantPoints();
+	}
+
 }

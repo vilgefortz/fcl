@@ -10,6 +10,7 @@ import research.fcl.library.variable.term.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.InlineVariableNotFoundException;
 import research.fcl.library.variables.InputVariableNotFoundException;
+import research.fcl.library.variables.TermNotFoundException;
 
 public class DefaultActionFactory {
 	protected String IS = "is";
@@ -19,7 +20,7 @@ public class DefaultActionFactory {
 	public DefaultActionFactory (Ruleblock rb) {
 		this.ruleblock=rb;
 	}
-	public Action createAction(String text, Rule r) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException {
+	public Action createAction(String text, Rule r) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, TermNotFoundException {
 		text = text.trim();
 		text = this.dropBrackets (text);
 		int pos = findFirstNotEnclosed ("or",text);
@@ -33,7 +34,7 @@ public class DefaultActionFactory {
 		return this.createOrAction (text,pos,r);
 	}
 
-	private Action createOrAction(String text, int pos, Rule ru) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException {
+	private Action createOrAction(String text, int pos, Rule ru) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, TermNotFoundException {
 		String left = text.substring(0, pos);
 		String right = text.substring(pos + OR.length());
 		Action l = this.createAction(left,ru);
@@ -41,7 +42,7 @@ public class DefaultActionFactory {
 		if (l==null || r ==null) throw new RuleParsingException("Unknown error at parsing rule expression");
 		return new OrAction (l,r,this.getAndMethod());
 	} 
-	private Action createAndAction(String text, int pos, Rule ru) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException {
+	private Action createAndAction(String text, int pos, Rule ru) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, TermNotFoundException {
 		String left = text.substring(0, pos);
 		String right = text.substring(pos+AND.length());
 		Action l = this.createAction(left,ru);
@@ -53,7 +54,7 @@ public class DefaultActionFactory {
 		return this.ruleblock.getAndMethod();
 	}
 
-	private Action parseSingleExpression(String text, Rule r) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException {
+	private Action parseSingleExpression(String text, Rule r) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, TermNotFoundException {
 		FunctionBlock fb = this.ruleblock.getFunctionBlock();
 		String varName = ParsingUtils.getFirstWord (text);
 		if (varName.equals("")) throw new RuleParsingException("Expected variable name");
@@ -68,7 +69,7 @@ public class DefaultActionFactory {
 		return new TermAction (t,v);
 	}
 	
-	private Term parseTerm(String text, BaseFunctionVariable v, Rule r) throws RuleParsingException {
+	private Term parseTerm(String text, BaseFunctionVariable v, Rule r) throws RuleParsingException, TermNotFoundException {
 		String word = ParsingUtils.getFirstWord(text = text.trim());
 		if (v.hasTerm (word)) {
 			String w =text.substring(word.length()).trim();

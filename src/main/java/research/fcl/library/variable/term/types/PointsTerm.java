@@ -47,4 +47,12 @@ public class PointsTerm extends Term {
 		return this.min;
 	}
 
+	@Override
+	public double[] getImportantPoints() {
+		double [] list = new double [this.points.size()];
+		for (int i=0; i<list.length; i++)
+			list[i]=points.get(i).x;
+		return list;
+	}
+
 }

@@ -1,5 +1,7 @@
 package research.fcl.library.accumulation;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import research.fcl.library.variable.term.Term;
 
 public class MaxMethod extends AccumulationMethod {
@@ -29,6 +31,11 @@ public class MaxMethod extends AccumulationMethod {
 			@Override
 			public double fun(double val) {
 				return Math.max(a.fun(val), b.fun(val));
+			}
+
+			@Override
+			public double[] getImportantPoints() {
+				return ArrayUtils.addAll (a.getImportantPoints(),b.getImportantPoints());
 			}
 			
 		};

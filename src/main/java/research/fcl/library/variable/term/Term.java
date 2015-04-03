@@ -13,6 +13,7 @@ public abstract class Term {
 	protected double max;
 	public abstract double getMax ();
 	public abstract double getMin();
+	public abstract double[] getImportantPoints();
 	public Term (String name) {
 		this.name=name;
 	}
@@ -57,6 +58,10 @@ public abstract class Term {
 			@Override
 			public double getMin() {
 				return 0;
+			}
+			@Override
+			public double[] getImportantPoints() {
+				return null;
 			}
 		};
 	}

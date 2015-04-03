@@ -7,8 +7,6 @@ import research.fcl.library.variable.term.TermDeclarationErrorException;
 
 public class SingletonTerm extends Term {
 
-	@Expose
-	private String jsfunction;
 	@Expose public double point;
 
 	public SingletonTerm(String termName, String definition) throws TermDeclarationErrorException {
@@ -23,11 +21,7 @@ public class SingletonTerm extends Term {
 		}
 		this.max = point;
 		this.min = point;
-		this.jsfunction = this.createJsFunction ();
-	}
 
-	private String createJsFunction() {
-		return "function (val) { return val===this.val? 1:0}";
 	}
 
 	@Override
@@ -43,6 +37,11 @@ public class SingletonTerm extends Term {
 	@Override
 	public double getMin() {
 		return this.point;
+	}
+
+	@Override
+	public double[] getImportantPoints() {
+		return new double [] {this.point};
 	}
 
 }

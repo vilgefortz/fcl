@@ -7,6 +7,7 @@ import research.fcl.library.parser.utils.ParsingUtils;
 import research.fcl.library.variable.term.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.OutputVariableNotFoundException;
+import research.fcl.library.variables.TermNotFoundException;
 
 public class DefaultEffectFactory {
 
@@ -17,7 +18,7 @@ public class DefaultEffectFactory {
 	public DefaultEffectFactory (Ruleblock rb) {
 		this.ruleblock = rb;
 	}
-	public Effect createEffect(String text, Rule r, List<Effect> effect) throws OutputVariableNotFoundException, RuleParsingException {
+	public Effect createEffect(String text, Rule r, List<Effect> effect) throws OutputVariableNotFoundException, RuleParsingException, TermNotFoundException {
 		text = text.trim();
 		String varName = ParsingUtils.getFirstWord(text);
 		BaseFunctionVariable var = ruleblock.getFunctionBlock().getRightVariable(varName);

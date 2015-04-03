@@ -10,6 +10,7 @@ import research.fcl.library.deffuzification.DefaultDeffuzificationMethods;
 import research.fcl.library.deffuzification.DefuzzificationMethod;
 import research.fcl.library.deffuzification.DefuzzificationMethodNotRecognisedException;
 import research.fcl.library.enviroment.Enviroment;
+import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.library.parser.JsonLogger;
 import research.fcl.library.parser.Parser;
 import research.fcl.library.parser.ParserBase;
@@ -19,8 +20,7 @@ import research.fcl.library.accumulation.AccumulationMethod;
 import research.fcl.library.accumulation.AccumulationMethodNotRecognisedException;
 import research.fcl.library.accumulation.DefaultAccumulationMethods;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 import com.google.gson.annotations.Expose;
 
 public class Application {
@@ -72,6 +72,16 @@ public class Application {
 	}
 	public String[] getAndMethodsNames() {
 		return this.andMethods.getNames();
+	}
+	
+	public FunctionBlock getFunctionBlock(String fbName) {
+		try {
+			return this.functionBlocks.get(functionBlocks.indexOf(FunctionBlock.getDummy(fbName)));
+		}
+		catch (Exception e) {
+			//not found
+			return null;
+		}
 	}
 }
 

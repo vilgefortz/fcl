@@ -104,8 +104,13 @@ public class BaseFunctionVariable implements Observer,Serializable {
 		return this.terms.contains(Term.getDummy(word));
 	}
 
-	public Term getTerm(String word) {
+	public Term getTerm(String word) throws TermNotFoundException {
+		try {
 		return this.terms.get(this.terms.indexOf(Term.getDummy(word)));
+		}
+		catch (IndexOutOfBoundsException e) {
+			throw new TermNotFoundException (word,this.name);
+		}
 	}
 
 	@Override

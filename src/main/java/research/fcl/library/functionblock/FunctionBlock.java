@@ -29,6 +29,9 @@ public class FunctionBlock {
 		this.app = app;
 		this.env = app.getEnv();
 	}
+	public FunctionBlock(String fbName) {
+		this.name=fbName;
+	}
 	public Application getApp() {
 		return app;
 	}
@@ -61,5 +64,19 @@ public class FunctionBlock {
 	@Override
 	public boolean equals(Object obj) {
 		return this.name.equals(((FunctionBlock)obj).name);
+	}
+	public static FunctionBlock getDummy(String fbName) {
+		return new FunctionBlock(fbName);
+	}
+	public BaseFunctionVariable getVariable(String name) throws VariableNotFoundException {
+		try {
+			return getLeftVariable(name);
+		} catch (InputVariableNotFoundException e) {
+			try {
+				return getRightVariable(name);
+			} catch (OutputVariableNotFoundException e1) {
+				throw new VariableNotFoundException (name);
+			}
+		}
 	}
 }
