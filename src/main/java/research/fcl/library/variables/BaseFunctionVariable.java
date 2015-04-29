@@ -174,4 +174,8 @@ public class BaseFunctionVariable implements Observer,Serializable {
 		return this.terms;
 	}
 
+	public FunctionBlock getFunctionBlock() {
+		return this.fb;
+	}
+
 }

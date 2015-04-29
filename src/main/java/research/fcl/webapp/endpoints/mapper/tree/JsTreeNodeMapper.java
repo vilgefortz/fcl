@@ -72,6 +72,10 @@ public class JsTreeNodeMapper {
 		var.getTerms().forEach(term -> {
 			JsTreeNode termNode = new JsTreeNode ();
 			termNode.setText(term.toString());
+			termNode.getA_attr().classAttr="term_node";
+			termNode.getA_attr().name=term.getName();
+			termNode.getA_attr().variable=var.getName();
+			termNode.getA_attr().functionBlock=var.getFunctionBlock().getName();
 			node.getChildren().add(termNode);
 		});	
 		return node;

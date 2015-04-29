@@ -69,6 +69,9 @@ public class FunctionBlock {
 		return new FunctionBlock(fbName);
 	}
 	public BaseFunctionVariable getVariable(String name) throws VariableNotFoundException {
+		if (name == null) {
+			throw new VariableNotFoundException ("null value given");
+		}
 		try {
 			return getLeftVariable(name);
 		} catch (InputVariableNotFoundException e) {
@@ -78,5 +81,8 @@ public class FunctionBlock {
 				throw new VariableNotFoundException (name);
 			}
 		}
+	}
+	public String getName() {
+		return this.name;
 	}
 }

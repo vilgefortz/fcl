@@ -51,8 +51,7 @@ input {
 	</div>
 	<div id="sidebar" class="col-md-4 sidebar">
 		<div id="variables" class="well">zmienne</div>
-		<div id="tree" class="well">
-		</div>
+		<div id="tree" class="well"></div>
 	</div>
 </div>
 <div class="row">
@@ -136,12 +135,16 @@ input {
 
 	var refreshTree = function() {
 		$.post("App?action=getTreeData", null, function(data) {
-			$('#tree').jstree("destroy");
+			var tree = $("#tree");
+			tree.jstree("destroy");
+			tree.bind("loaded.jstree", function (event, data) {
+		        tree.jstree("open_all");
+		    });
 			var treeData = $.parseJSON(data);
-			$('#tree').jstree({ 'core' : {
+			tree.jstree({ 'core' : {
 			    'data' : treeData
 			       } });
-			$('#tree').jstree().redraw(true);
+			tree.jstree().redraw(true);
 		});
 	}
 
@@ -184,7 +187,6 @@ input {
 			text : errorMsg.entry,
 			type : "error" // also warning and information
 		} ]);
-	};
 	var editNotification = false;
 	var editor = null;
 	$(document).ready(function() {
@@ -208,3 +210,24 @@ input {
 	});
 </script>
 
+<script>
+//little windows library
+var rail = function (main){
+	this.railorad : main
+	this.elements : [],
+	this.add : function (element, pos) {
+		if (pos>0) {
+			elements.splice(pos,0,element);
+			element.main = this.railorad;
+			this.redraw();
+		}
+	},
+	this.redraw : function () {
+		for (var i=0; i< elements.lenght; i++) {
+			elements[i].redraw();
+		}
+	},
+	} ($("#railroad"));
+}
+
+</script>

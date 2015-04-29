@@ -17,7 +17,7 @@ import research.fcl.webapp.endpoints.dto.TermPointsDto;
 
 
 public class TermEndpoint {
-	public static long resolution = 500;
+	public static int resolution = 200;
 	//responses
 	public static String createErrorJson (String msg) {
 		return"{\"error\":\"" + msg + "\"}";
@@ -33,9 +33,9 @@ public class TermEndpoint {
 			}
 			String varName = request.getParameter("var");
 			BaseFunctionVariable variable = fb.getVariable(varName);
-			long res = resolution;
+			int res = resolution;
 			try {
-				res = Long.parseLong(request.getParameter("res"));
+				res = Integer.parseInt(request.getParameter("res"));
 			}
 			catch (Exception e) {
 				//do nothing, use default
@@ -49,7 +49,6 @@ public class TermEndpoint {
 			}
 			return new DefaultGsonMapper (new TermPointsDto(variable, terms,res)).toJson();
 		} catch (Exception e) {
-			e.printStackTrace();	
 			return createErrorJson (e.getMessage());
 			
 		}

@@ -9,4 +9,12 @@ public class HtmlAttributes {
 	public String classAttr;
 	@Expose
 	public String value;
+	@Expose
+	public String name;
+	@SerializedName("data-variable")
+	@Expose
+	public String variable;
+	@SerializedName("data-function_block")
+	@Expose
+	public String functionBlock;
 }

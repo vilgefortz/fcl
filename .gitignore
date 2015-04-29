@@ -9,3 +9,4 @@ target
 !.settings/.jsdtscope
 .project
 .classpath
+.geanyprj
