@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
+import research.fcl.library.variables.BaseFunctionVariable;
 import com.google.gson.annotations.Expose;
 
 public class Variable implements Serializable{
@@ -13,6 +13,19 @@ public class Variable implements Serializable{
 	private List<Observer> observers = new ArrayList<Observer> ();
 	@Expose
 	private String name = "";
+	@Expose double min = Double.MAX_VALUE;
+	@Expose double max = -Double.MAX_VALUE;
+	public void calculateRange () {
+		this.observers.forEach (
+			o -> {
+				if (o instanceof BaseFunctionVariable) {
+					this.min = Math.min (this.min, ((BaseFunctionVariable)o).getMin());
+					this.max = Math.max (this.max, ((BaseFunctionVariable)o).getMax());
+				}
+				this.min = Math.min (this.min, this.getValue() );
+				this.max = Math.max (this.max, this.getValue() );
+			});
+	}
 	public String getName() {
 		return name;
 	}

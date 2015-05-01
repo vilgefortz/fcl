@@ -39,7 +39,9 @@ public class Variables {
 	public static String getEnviroment(HttpServletRequest request,
 			HttpServletResponse response, Application app) {
 		try {
-			DefaultGsonMapper mapper = new DefaultGsonMapper(app.getEnv());
+			Enviroment env = app.getEnv();
+			env.updateRanges();
+			DefaultGsonMapper mapper = new DefaultGsonMapper(env);
 			return mapper.toJson();	
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

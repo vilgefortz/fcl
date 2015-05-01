@@ -8,7 +8,14 @@
 	min-width: 100%;
 	border: 3px solid black
 }
-
+.window-header {
+	border-width: 1px;
+    height: 22px;
+    border-bottom: solid;
+}
+.window-resizable {
+	padding-top:3px
+}
 .container {
 	margin-bottom: 40px;
 }
@@ -16,16 +23,13 @@
 #resizable h3 {
 	text-align: center;
 	margin: 0;
+	margin: 0;
 }
 
 #resizable {
 	position: relative
 }
-
-#sidebar {
-	background-color: grey;
-}
-
+	
 #editor {
 	position: absolute;
 	top: 15px;
@@ -41,17 +45,18 @@ input {
 <div class="row">
 	<div class="col-md-8 editor">
 		<div id="resizable">
-			<h3 class="ui-widget-header">FCL Editor</h3>
+			<!--3 class="ui-widget-header">FCL Editor</h3-->
 			<div id="editor">
 				<jsp:include page='example.fcl' />
 			</div>
 
 		</div>
 		<div id="varDiv"></div>
+		<button id="addWindow">add</button>
+		<button class="treeWindowButton">add Tree</button>
 	</div>
 	<div id="sidebar" class="col-md-4 sidebar">
-		<div id="variables" class="well">zmienne</div>
-		<div id="tree" class="well"></div>
+		<div id="window-rail"></div>
 	</div>
 </div>
 <div class="row">
@@ -68,7 +73,9 @@ input {
 <script src="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
 <script src="scripts/lib/ace/src-noconflict/ace.js"
 	type="text/javascript" charset="utf-8"></script>
-
+	<link rel="stylesheet" href="css/windowmanager/fontello.css" />
+	<link rel="stylesheet" href="css/windowmanager/windowsmanager.css" />
+	<script src="scripts/lib/windowmanager/windowmanager.js" type="text/javascript"></script>
 <script>
 	//	var mainData;
 	var env;
@@ -133,24 +140,24 @@ input {
 		});
 	};
 
-	var refreshTree = function() {
-		$.post("App?action=getTreeData", null, function(data) {
-			var tree = $("#tree");
-			tree.jstree("destroy");
-			tree.bind("loaded.jstree", function (event, data) {
-		        tree.jstree("open_all");
-		    });
-			var treeData = $.parseJSON(data);
-			tree.jstree({ 'core' : {
-			    'data' : treeData
-			       } });
-			tree.jstree().redraw(true);
-		});
-	}
+	//~ var refreshTree = function() {
+		//~ $.post("App?action=getTreeData", null, function(data) {
+			//~ var tree = $("#tree");
+			//~ tree.jstree("destroy");
+			//~ tree.bind("loaded.jstree", function (event, data) {
+		        //~ tree.jstree("open_all");
+		    //~ });
+			//~ var treeData = $.parseJSON(data);
+			//~ tree.jstree({ 'core' : {
+			    //~ 'data' : treeData
+			       //~ } });
+			//~ tree.jstree().redraw(true);
+		//~ });
+	//~ }
 
 	var refreshIDE = function() {
 		refreshEnviromentData();
-		refreshTree();
+	//	refreshTree();
 		getErrors();
 	}
 
@@ -158,6 +165,10 @@ input {
 		$.post("Gateway", {
 			data : editor.getSession().getValue()
 		}, function(value) {
+			if (editor.registeredListeners.length > 0) 
+				$.each (editor.registeredListeners, function (key, obj) {
+					obj.refresh();
+				});
 			refreshIDE();
 			editNotification = false;
 		});
@@ -187,8 +198,11 @@ input {
 			text : errorMsg.entry,
 			type : "error" // also warning and information
 		} ]);
+	}
 	var editNotification = false;
 	var editor = null;
+	
+	
 	$(document).ready(function() {
 		editNotification = false;
 		editor = ace.edit("editor");
@@ -206,28 +220,138 @@ input {
 				editor.resize();
 			}
 		});
+		editor.registeredListeners = [];
+		editor.removeListener = function (fun) {
+			this.registeredListeners.remove(fun);
+		}
+		editor.registerListener = function (fun) {
+			this.registeredListeners.push(fun);
+		}
 		reloadEditor();
 	});
+	//VARIABLE WINDOW
+	//requires editor
+	var varVisible = false;
+	$(document).ready (function () {
+		$(".varWindowButton").click (function () {
+			if (varVisible) return;	//if window is already shown return without showing it again 
+			varVisible = true;
+			windowsManager.add (new Window ({
+				editor : editor,
+				close:true,	
+				closeIcon:'&#xe804;',
+				closing : function (wnd) {
+					treeVisible=false;
+				},
+				toggle:true,
+				toggleUpIcon:'&#xe801;',
+				toggleDownIcon:'&#xe800;',
+				moveable:true,
+				moveUpIcon:'&#xe803;',
+				moveDownIcon:'&#xe802;',
+				resizable:true,
+				title:'PROJECT TREE',
+				refresh : function () {
+					wnd=this.wnd;
+					$.post("App?action=getTreeData", null, function(data) {
+						var tree = wnd.content;
+						tree.jstree("destroy");
+						tree.bind("loaded.jstree", function (event, data) {
+							tree.jstree("open_all");
+							tree.jstree().redraw(true);
+						});
+						var treeData = $.parseJSON(data);		
+						tree.jstree( { 
+							'core' : {
+								'data' : treeData
+							} 
+						});
+					});	
+				},	
+				init : function (wnd) {
+					this.wnd=wnd;
+					editor.registerListener (this);
+					wnd.setup.refresh (wnd);
+				}
+			}));
+		});
+	});
+	
+	
+	
+	//TREE WINDOW requires global variables editor (ACE) 
+	//to enable requires DOM element with class treeWindowButton
+	var treeVisible = false;
+	$(document).ready (function () {
+		$(".treeWindowButton").click (function () {
+			if (treeVisible) return;	//if window is already shown return without showing it again 
+			treeVisible = true;
+			windowsManager.add (new Window ({
+				editor : editor,
+				close:true,
+				closeIcon:'&#xe804;',
+				closing : function (wnd) {
+					treeVisible=false;
+				},
+				toggle:true,
+				toggleUpIcon:'&#xe801;',
+				toggleDownIcon:'&#xe800;',
+				moveable:true,
+				moveUpIcon:'&#xe803;',
+				moveDownIcon:'&#xe802;',
+				resizable:true,
+				title:'PROJECT TREE',
+				refresh : function () {
+					wnd=this.wnd;
+					$.post("App?action=getTreeData", null, function(data) {
+						var tree = wnd.content;
+						tree.jstree("destroy");
+						tree.bind("loaded.jstree", function (event, data) {
+							tree.jstree("open_all");
+							tree.jstree().redraw(true);
+						});
+						var treeData = $.parseJSON(data);		
+						tree.jstree( { 
+							'core' : {
+								'data' : treeData
+							} 
+						});
+					});	
+				},	
+				init : function (wnd) {
+					this.wnd=wnd;
+					editor.registerListener (this);
+					wnd.setup.refresh (wnd);
+				}
+			}));
+		});
+	});
+	
+	//TESTING WINDOWS
+	
+	var windowContainer = $("#window-rail");
+        var windowsManager = new WindowsManager (windowContainer);
+        var i=0;
+      
+	$("#addWindow").click (function () {
+		var wnd = new Window ({
+			close:true,
+			closeIcon:'&#xe804;',
+			toggle:true,
+			toggleUpIcon:'&#xe801;',
+			toggleDownIcon:'&#xe800;',
+			moveable:true,
+			moveUpIcon:'&#xe803;',
+			moveDownIcon:'&#xe802;',
+			resizable:true,
+			title:i++,
+			refresh : function (wnd) {
+				
+			}
+		});
+		windowsManager.add(wnd);
+		wnd.content.append ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a urna tortor. Cras sagittis ut risus vitae gravida. Aenean eu sem velit. Mauris rutrum, dui vitae pellentesque aliquam, arcu massa bibendum justo, consequat sagittis lectus ex luctus lacus. Sed at ipsum lectus. Integer aliquet sit amet dui at aliquet. Nam arcu orci, sodales id nunc non, aliquam congue nisi. Donec laoreet quam est, in congue mass");
+	});
+
 </script>
 
-<script>
-//little windows library
-var rail = function (main){
-	this.railorad : main
-	this.elements : [],
-	this.add : function (element, pos) {
-		if (pos>0) {
-			elements.splice(pos,0,element);
-			element.main = this.railorad;
-			this.redraw();
-		}
-	},
-	this.redraw : function () {
-		for (var i=0; i< elements.lenght; i++) {
-			elements[i].redraw();
-		}
-	},
-	} ($("#railroad"));
-}
-
-</script>
