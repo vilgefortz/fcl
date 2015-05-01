@@ -1,0 +1,45 @@
+#window-container {
+	width:100%;
+	height:100px;
+	display:block;
+}
+
+.window-content {
+	overflow:auto;
+	width:100%;
+	height:100%;
+	box-sizing: content-box;
+}
+
+.window-resizable {
+	overflow:hidden;
+	box-sizing: content-box;
+}
+
+.bs-window {
+    border-style: ridge;
+    border-width: 5px;
+	width:100%;
+}
+.window-management {
+	display:inline;
+	float:right;
+}
+.mng-button {
+	font-family: "fontello";
+	font-style: normal;
+	font-weight: normal;
+	display:inline;
+    cursor:hand;
+    cursor:pointer;
+	background-color:gray;
+	padding:2px 2px;
+	border-style:solid;
+	border-width:1px;
+	margin:1px;
+	box-shadow: 2px 2px 2px #888888;
+}
+
+.window-title {
+	display:inline;
+}
