@@ -258,6 +258,7 @@ input {
 			self.redraw ();
 		});
 	};
+	
 	VariableWindow.prototype.redraw = function () {
 		var self = this;
 		var previous = false;
@@ -294,8 +295,8 @@ input {
 					break;
 				}
 			}
-			if (!exists) {
-				
+			if (!varExists) {
+				this.variables.splice (i,1);
 			}
 		}
 	}
@@ -331,8 +332,25 @@ input {
 		}
 	}
 	
-	Variable.setValueAndReload = function (value) {
+	Variable.prototype.setValueAndReload = function (value) {
 		var self = this;
+		self.tempValue=value;
+		if (self.lockReload) return;
+		self.lockReload = true;
+		setTimeout (function () {
+		self.lockReload = false;
+		$.post("App?action=setVariable", {
+			"name" : self.name,
+			"value" : self.tempValue,
+		}, function(data) {
+		if (data == "null") {
+						//reloadEditor();
+		} else {
+			self.parent.setEnviroment ($.parseJSON (data));
+			self.parent.redraw();
+			}
+		});
+		}, self.lockReloadDelay);
 		
 	}
 	Variable.prototype.updateHtml = function () {
@@ -353,47 +371,18 @@ input {
 			change : function (event, ui) {
 				self.lock=false;
 				self.input.val(ui.value);
-				$.post("App?action=setVariable", {
-					"name" : self.name,
-					"value" : ui.value,
-				}, function(data) {
-					if (data == "null") {
-						//reloadEditor();
-					} else {
-						self.parent.setEnviroment ($.parseJSON (data));
-						self.parent.redraw();
-					}
-				});
+				self.setValueAndReload (ui.value);
 			},
 			slide: function(event, ui) {
 				self.lock = true;
 				self.input.val(ui.value);
-				$.post("App?action=setVariable", {
-					"name" : self.name,
-					"value" : ui.value,
-				}, function(data) {
-					if (data == "null") {
-						//reloadEditor();
-					} else {
-						self.parent.setEnviroment ($.parseJSON (data));
-						self.parent.redraw();
-					}
-				});
+				self.setValueAndReload (ui.value);
 			}
 		}); 
 		this.input.change(function () {
 			self.lock = false;
-			$.post("App?action=setVariable", {
-					"name" : self.name,
-					"value" : self.input.val(),
-				}, function(data) {
-					if (data == "null") {
-						//reloadEditor();
-					} else {
-						self.parent.setEnviroment ($.parseJSON (data));
-						self.parent.redraw();
-					}
-				});
+			self.input.val(ui.value);
+			self.setValueAndReload (self.input.val());
 		});
 	}
 	
