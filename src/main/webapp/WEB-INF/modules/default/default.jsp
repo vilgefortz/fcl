@@ -41,6 +41,14 @@
 input {
 	color: #000000;
 }
+
+.var-send-div {
+	width:70%
+}
+
+.var-send-input {
+	width:30%
+}
 </style>
 <div class="row">
 	<div class="col-md-8 editor">
@@ -54,6 +62,7 @@ input {
 		<div id="varDiv"></div>
 		<button id="addWindow">add</button>
 		<button class="treeWindowButton">add Tree</button>
+		<button class="varWindowButton">add Var</button>
 	</div>
 	<div id="sidebar" class="col-md-4 sidebar">
 		<div id="window-rail"></div>
@@ -215,25 +224,182 @@ input {
 				}, 1000);
 			}
 		});
-		$("#resizable").resizable({
+		$("#resizable").resizable	({
 			resize : function(event, ui) {
 				editor.resize();
 			}
 		});
 		editor.registeredListeners = [];
 		editor.removeListener = function (fun) {
-			this.registeredListeners.remove(fun);
+			if (fun.index) this.registeredListeners.splice (fun.index,1);	
 		}
 		editor.registerListener = function (fun) {
-			this.registeredListeners.push(fun);
+			var index = this.registeredListeners.push(fun);
+			fun.index = index
 		}
 		reloadEditor();
 	});
 	//VARIABLE WINDOW
 	//requires editor
+	
+	var VariableWindow = function (element) {
+		this.element = element;
+		this.init ();
+	};
+	VariableWindow.prototype.init = function () {
+		this.variables = [];
+		this.reload ();
+	}
+	VariableWindow.prototype.reload = function () {
+		var self = this;
+		$.post ('App?action=getEnviroment',null,function (data) {
+			if (!data) return;
+			self.env = $.parseJSON(data);
+			self.redraw ();
+		});
+	};
+	VariableWindow.prototype.redraw = function () {
+		var self = this;
+		var previous = false;
+		$.each (this.env, function (key, value) {
+			var v = self.getVariable (value.name);
+			if (!v) {
+				v = new Variable (value,self);
+				if (previous) {
+					previous.element.after('<div class="var-input var-' + value.name +'"></div>');
+					v.element = self.element.find ('.var-' + value.name).first();
+					v.updateHtml ();
+				}
+				else {
+					self.element.append('<div class="var-input var-' + value.name +'"></div>');
+					v.element = self.element.find ('.var-' + value.name).first();
+					v.updateHtml ();
+				}
+				self.variables.push(v);
+			}
+			else {
+				previous = v;
+				v.updateValue(value)
+				v.updateHtml ();
+			};
+		});
+		self.clearUnused();
+	};
+	VariableWindow.prototype.clearUnused = function () {
+		for (var i=0; i<this.variables.length; i++) {
+			var varExists = false;
+			for (var j=0; j<this.env.length; j++) {
+				if (this.variables[i].name == this.env[i].name) {
+					varExists = true;
+					break;
+				}
+			}
+			if (!exists) {
+				
+			}
+		}
+	}
+	VariableWindow.prototype.setEnviroment = function (env) { 
+		this.env = env;
+	}
+	VariableWindow.prototype.getVariable = function (name) {
+		var self = this;
+		for (var i=0; i<self.variables.length; i++) {
+			if (self.variables[i].name == name) return self.variables[i];
+		}
+		return false;
+	}
+	var Variable = function (value,parent) {
+		this.parent = parent;
+		this.name = value.name;
+		this.value = value.value;
+		this.min = value.min;
+		this.max = value.max;
+		this.lock = false // lock this value changes when sliding
+		this.hasChanged = true;
+		this.lockReload = false; //this value is setup true to notify that there is change about to be done
+		this.lockReloadDelay = 200;
+	}
+	
+	Variable.prototype.updateValue = function (value) {
+		this.name = value.name;
+		this.min = value.min;
+		this.max = value.max;
+		if (value.value != this.value) {
+			this.hasChanged = true;
+			this.value = value.value;
+		}
+	}
+	
+	Variable.setValueAndReload = function (value) {
+		var self = this;
+		
+	}
+	Variable.prototype.updateHtml = function () {
+		var self = this;
+		if (!this.hasChanged) return;
+		if (this.lock) return;
+		this.hasChanged=false;
+		this.element.text ('');
+		this.element.append ('<div class="var-send-slider"></div><input class="var-send-input" value="'+this.value+'" name="'+this.name+'" />');
+		this.input = this.element.find ('.var-send-input').first();
+		this.slider = this.element.find ('.var-send-slider').first();
+		this.slider.slider ({
+			range: this.name,
+			value: this.value,
+			step: (this.max-this.min)/1000,
+			min: this.min,
+			max: this.max,
+			change : function (event, ui) {
+				self.lock=false;
+				self.input.val(ui.value);
+				$.post("App?action=setVariable", {
+					"name" : self.name,
+					"value" : ui.value,
+				}, function(data) {
+					if (data == "null") {
+						//reloadEditor();
+					} else {
+						self.parent.setEnviroment ($.parseJSON (data));
+						self.parent.redraw();
+					}
+				});
+			},
+			slide: function(event, ui) {
+				self.lock = true;
+				self.input.val(ui.value);
+				$.post("App?action=setVariable", {
+					"name" : self.name,
+					"value" : ui.value,
+				}, function(data) {
+					if (data == "null") {
+						//reloadEditor();
+					} else {
+						self.parent.setEnviroment ($.parseJSON (data));
+						self.parent.redraw();
+					}
+				});
+			}
+		}); 
+		this.input.change(function () {
+			self.lock = false;
+			$.post("App?action=setVariable", {
+					"name" : self.name,
+					"value" : self.input.val(),
+				}, function(data) {
+					if (data == "null") {
+						//reloadEditor();
+					} else {
+						self.parent.setEnviroment ($.parseJSON (data));
+						self.parent.redraw();
+					}
+				});
+		});
+	}
+	
 	var varVisible = false;
 	$(document).ready (function () {
-		$(".varWindowButton").click (function () {
+		var addVariableWindow = function () {
 			if (varVisible) return;	//if window is already shown return without showing it again 
 			varVisible = true;
 			windowsManager.add (new Window ({
@@ -241,7 +407,7 @@ input {
 				close:true,	
 				closeIcon:'&#xe804;',
 				closing : function (wnd) {
-					treeVisible=false;
+					varVisible=false;
 				},
 				toggle:true,
 				toggleUpIcon:'&#xe801;',
@@ -250,31 +416,20 @@ input {
 				moveUpIcon:'&#xe803;',
 				moveDownIcon:'&#xe802;',
 				resizable:true,
-				title:'PROJECT TREE',
+				title:'ENVIROMENT',
 				refresh : function () {
-					wnd=this.wnd;
-					$.post("App?action=getTreeData", null, function(data) {
-						var tree = wnd.content;
-						tree.jstree("destroy");
-						tree.bind("loaded.jstree", function (event, data) {
-							tree.jstree("open_all");
-							tree.jstree().redraw(true);
-						});
-						var treeData = $.parseJSON(data);		
-						tree.jstree( { 
-							'core' : {
-								'data' : treeData
-							} 
-						});
-					});	
-				},	
+					this.varWindow.reload ();
+				},
 				init : function (wnd) {
 					this.wnd=wnd;
+					var varWindow = new VariableWindow (wnd.element);
+					this.varWindow = varWindow;
 					editor.registerListener (this);
-					wnd.setup.refresh (wnd);
 				}
 			}));
-		});
+		};
+		//addVariableWindow();
+		$(".varWindowButton").click (addVariableWindow);
 	});
 	
 	
