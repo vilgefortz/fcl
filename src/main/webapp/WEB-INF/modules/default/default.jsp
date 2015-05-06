@@ -48,7 +48,7 @@
 	
 #editor {
 	position: absolute;
-	top: 15px;
+	top: 30px;
 	left: 0;
 	right: 0;
 	bottom: 0;
