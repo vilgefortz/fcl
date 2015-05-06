@@ -36,6 +36,20 @@ public class Variables {
 			return "false";	
 		}
 	}
+	public static String removeVariable(HttpServletRequest request,
+			HttpServletResponse response, Application app) {
+		try {
+			String varName = request.getParameter("name");
+			HttpSession session = request.getSession();
+			app.getEnv().removeVariable(varName);
+			session.setAttribute("app", app);
+			session.setAttribute("env", app.getEnv());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "false";	
+		}
+		return "ok";
+	}
 	public static String getEnviroment(HttpServletRequest request,
 			HttpServletResponse response, Application app) {
 		try {

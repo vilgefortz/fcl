@@ -78,90 +78,87 @@ input {
 </style>
 <div class="row">
 	<div class="col-md-8 editor">
+		<div id="toolbox" class="toolbox">
+			<button class='treeWindowButton'>TREE</button>
+			<button class='varWindowButton'>VAR</button>
+		</div>
 		<div id="resizable">
-			<!--3 class="ui-widget-header">FCL Editor</h3-->
+			<h3 class="ui-widget-header">FCL Editor</h3>
 			<div id="editor">
 				<jsp:include page='example.fcl' />
 			</div>
 
 		</div>
-		<div id="varDiv"></div>
-		<button id="addWindow">add</button>
-		<button class="treeWindowButton">add Tree</button>
-		<button class="varWindowButton">add Var</button>
 	</div>
 	<div id="sidebar" class="col-md-4 sidebar">
 		<div id="window-rail"></div>
 	</div>
 </div>
-<div class="row">
-	<div id="log" class="col-md-8"></div>
-</div>
 
 
 <script>
 	//	var mainData;
-	var env;
-	var refreshEnviromentData = function(callback) {
-		$.post("App?action=getEnviroment", null, function(data) {
-			env = $.parseJSON(data);
-			refreshVariableDiv();
-			if (callback)
-				callback();
-		});
-	};
-	var refreshVariableDiv = function() {
-		$("#varDiv").text("");
-		var text = "Variables :<br>";
-		$
-				.each(
-						env,
-						function(key, value) {
-							text += value.name;
-							text += "<input title='Wprowadź liczbę' pattern='-?[0-9]*\.?[0-9]+' class='variable-input' id='var-"
-									+ key
-									+ "' name='"
-									+ value.name
-									+ "' value='" + value.value + "'><br>";
-						});
-		var changingVariable;
-		$("#varDiv").append(text);
-		$(".variable-input").keyup(function() {
-			if (changingVariable != null)
-				return;
-			changingVariable = this;
-			window.setTimeout(function() {
-				var id = $(changingVariable).attr('id');
-				changingVariable = null;
-				id = /-.*/.exec(id);
-				id = ("" + id).substring(1);
-				var val = $("#var-" + id).val();
-				val = parseFloat(val);
-				if (val === env[id].value)
-					return;
-				var name = env[id].name;
-				$.post("App?action=setVariable", {
-					"name" : name,
-					"value" : val
-				}, function(data) {
-					if (data == "null") {
-						reloadEditor();
-					} else {
-						refreshVariables();
-					}
-				});
-
-			}, 1500);
-		});
-	};
-	var refreshVariables = function() {
-		refreshEnviromentData(function() {
-			$.each(env, function(key, value) {
-				if (value.value !== $("#var-" + key).val())
-					$("#var-" + key).val(value.value);
-			});
-		});
-	};
+	//~ var env;
+	//~ var refreshEnviromentData = function(callback) {
+		//~ $.post("App?action=getEnviroment", null, function(data) {
+			//~ env = $.parseJSON(data);
+			//~ refreshVariableDiv();
+			//~ if (callback)
+				//~ callback();
+		//~ });
+	//~ };
+	//~ var refreshVariableDiv = function() {
+		//~ $("#varDiv").text("");
+		//~ var text = "Variables :<br>";
+		//~ $
+				//~ .each(
+						//~ env,
+						//~ function(key, value) {
+							//~ text += value.name;
+							//~ text += "<input title='Wprowadź liczbę' pattern='-?[0-9]*\.?[0-9]+' class='variable-input' id='var-"
+									//~ + key
+									//~ + "' name='"
+									//~ + value.name
+									//~ + "' value='" + value.value + "'><br>";
+						//~ });
+		//~ var changingVariable;
+		//~ $("#varDiv").append(text);
+		//~ $(".variable-input").keyup(function() {
+			//~ if (changingVariable != null)
+				//~ return;
+			//~ changingVariable = this;
+			//~ window.setTimeout(function() {
+				//~ var id = $(changingVariable).attr('id');
+				//~ changingVariable = null;
+				//~ id = /-.*/.exec(id);
+				//~ id = ("" + id).substring(1);
+				//~ var val = $("#var-" + id).val();
+				//~ val = parseFloat(val);
+				//~ if (val === env[id].value)
+					//~ return;
+				//~ var name = env[id].name;
+				//~ $.post("App?action=setVariable", {
+					//~ "name" : name,
+					//~ "value" : val
+				//~ }, function(data) {
+					//~ if (data == "null") {
+						//~ reloadEditor();
+					//~ } else {
+						//~ refreshVariables();
+					//~ }
+				//~ });
+//~ 
+			//~ }, 1500);
+		//~ });
+	//~ };
+	//~ var refreshVariables = function() {
+		//~ refreshEnviromentData(function() {
+			//~ $.each(env, function(key, value) {
+				//~ if (value.value !== $("#var-" + key).val())
+					//~ $("#var-" + key).val(value.value);
+			//~ });
+		//~ });
+	//~ };
 
 	//~ var refreshTree = function() {
 		//~ $.post("App?action=getTreeData", null, function(data) {
@@ -178,11 +175,11 @@ input {
 		//~ });
 	//~ }
 
-	var refreshIDE = function() {
-		refreshEnviromentData();
-	//	refreshTree();
-		getErrors();
-	}
+	//~ var refreshIDE = function() {
+		//~ refreshEnviromentData();
+	//~ //	refreshTree();
+		//~ getErrors();
+	//~ }
 
 	var reloadEditor = function() {
 		$.post("Gateway", {
@@ -192,8 +189,8 @@ input {
 				$.each (editor.registeredListeners, function (key, obj) {
 					obj.refresh();
 				});
-			refreshIDE();
 			editNotification = false;
+			getErrors (null);
 		});
 	};
 
@@ -406,6 +403,14 @@ input {
 			"<div class='mng-refresh-var mng-button'>&#xe805;</div>"+
 			"<div class='mng-remove-var mng-button'>&#xe804;</div>"+
 			"</div>");
+			this.label.find('.mng-reresh-var').first().click( function () {
+				self.parent.reload();
+			});
+			this.label.find('.mng-remove-var').first().click( function () {
+				$.post ('App?action=remove-var', { name : self.name }, function () {
+					self.parent.reload();
+				});
+			})
 		}
 		this.input.change(function () {
 			self.lock = false;
