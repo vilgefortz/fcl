@@ -13,9 +13,12 @@ public class Variable implements Serializable{
 	private List<Observer> observers = new ArrayList<Observer> ();
 	@Expose
 	private String name = "";
+	@Expose
+	private boolean noRange=false;
 	@Expose double min = Double.MAX_VALUE;
 	@Expose double max = -Double.MAX_VALUE;
 	public void calculateRange () {
+		log.info ("TEMPORARY LOGGING : " + this.observers.size());
 		this.observers.forEach (
 			o -> {
 				if (o instanceof BaseFunctionVariable) {
@@ -25,6 +28,8 @@ public class Variable implements Serializable{
 				this.min = Math.min (this.min, this.getValue() );
 				this.max = Math.max (this.max, this.getValue() );
 			});
+		if (this.min == Double.MAX_VALUE || this.max == -Double.MAX_VALUE) this.noRange = true;
+		else this.noRange = false;
 	}
 	public String getName() {
 		return name;

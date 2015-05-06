@@ -1,5 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	<link rel="stylesheet" href="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.css">
+	<link rel="stylesheet" href="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.theme.css">
+	<link rel="stylesheet" href="scripts/lib/dist/themes/default/style.min.css" />
+	<script src="scripts/lib/dist/jstree.min.js"></script>
+	<script src="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+	<script src="scripts/lib/ace/src-noconflict/ace.js"	type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="css/windowmanager/fontello.css" />
+	<link rel="stylesheet" href="css/windowmanager/windowsmanager.css" />
+	<script src="scripts/lib/windowmanager/windowmanager.js" type="text/javascript"></script>
+	
 <style>
 #resizable {
 	width: 100%;
@@ -7,6 +17,12 @@
 	max-width: 100%;
 	min-width: 100%;
 	border: 3px solid black
+}
+.var-management {
+	margin-right:4px;
+}
+.mng-refresh-var {
+	padding: 2px 4px 2px 3px;
 }
 .window-header {
 	border-width: 1px;
@@ -41,13 +57,23 @@
 input {
 	color: #000000;
 }
-
-.var-send-div {
-	width:70%
+.var-send-slider {
+	margin:3px auto; 
+	width:94%;
 }
 
+/*
+.var-send-div {
+	width:70%
+}*/
+
 .var-send-input {
-	width:30%
+	width:37%;
+	margin-right:3%;
+}
+.var-input-label {
+	margin-left:3%;
+	width:57%;
 }
 </style>
 <div class="row">
@@ -72,19 +98,7 @@ input {
 	<div id="log" class="col-md-8"></div>
 </div>
 
-<link rel="stylesheet"
-	href="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.css">
-<link rel="stylesheet"
-	href="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.theme.css">
-<link rel="stylesheet"
-	href="scripts/lib/dist/themes/default/style.min.css" />
-<script src="scripts/lib/dist/jstree.min.js"></script>
-<script src="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
-<script src="scripts/lib/ace/src-noconflict/ace.js"
-	type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" href="css/windowmanager/fontello.css" />
-	<link rel="stylesheet" href="css/windowmanager/windowsmanager.css" />
-	<script src="scripts/lib/windowmanager/windowmanager.js" type="text/javascript"></script>
+
 <script>
 	//	var mainData;
 	var env;
@@ -290,12 +304,13 @@ input {
 		for (var i=0; i<this.variables.length; i++) {
 			var varExists = false;
 			for (var j=0; j<this.env.length; j++) {
-				if (this.variables[i].name == this.env[i].name) {
+				if (this.variables[i].name == this.env[j].name) {
 					varExists = true;
 					break;
 				}
 			}
 			if (!varExists) {
+				this.variables[i].element.remove();
 				this.variables.splice (i,1);
 			}
 		}
@@ -309,13 +324,14 @@ input {
 			if (self.variables[i].name == name) return self.variables[i];
 		}
 		return false;
-	}
+	}	
 	var Variable = function (value,parent) {
 		this.parent = parent;
 		this.name = value.name;
 		this.value = value.value;
 		this.min = value.min;
 		this.max = value.max;
+		this.noRange = value.noRange || (this.max==this.min);
 		this.lock = false // lock this value changes when sliding
 		this.hasChanged = true;
 		this.lockReload = false; //this value is setup true to notify that there is change about to be done
@@ -323,11 +339,12 @@ input {
 	}
 	
 	Variable.prototype.updateValue = function (value) {
-		this.name = value.name;
-		this.min = value.min;
-		this.max = value.max;
-		if (value.value != this.value) {
+		if (value.value != this.value || value.max !=this.max || value.min!=this.min || value.name!= this.name) {
 			this.hasChanged = true;
+			this.name = value.name;
+			this.min = value.min;
+			this.max = value.max;
+			this.noRange = value.noRange || (this.max==this.min);
 			this.value = value.value;
 		}
 	}
@@ -359,29 +376,39 @@ input {
 		if (this.lock) return;
 		this.hasChanged=false;
 		this.element.text ('');
-		this.element.append ('<div class="var-send-slider"></div><input class="var-send-input" value="'+this.value+'" name="'+this.name+'" />');
+		
+		this.element.append ('</div><label class="var-input-label" for="var-input-' + this.name + '">'+this.name+'</label><input name="var-input-'+ this.name+'" class="var-send-input" value="'
+							+this.value+'" name="'+this.name+'" /><div class="var-send-slider">');
 		this.input = this.element.find ('.var-send-input').first();
+		this.label = this.element.find ('.var-input-label').first();
 		this.slider = this.element.find ('.var-send-slider').first();
-		this.slider.slider ({
-			range: this.name,
-			value: this.value,
-			step: (this.max-this.min)/1000,
-			min: this.min,
-			max: this.max,
-			change : function (event, ui) {
-				self.lock=false;
-				self.input.val(ui.value);
-				self.setValueAndReload (ui.value);
-			},
-			slide: function(event, ui) {
-				self.lock = true;
-				self.input.val(ui.value);
-				self.setValueAndReload (ui.value);
-			}
-		}); 
+		if (!this.noRange) {
+			this.slider.slider ({
+				range: this.name,
+				value: this.value,
+				step: Math.abs(this.max-this.min)/1000,
+				min: this.min,
+				max: this.max,
+				change : function (event, ui) {
+					self.lock=false;
+					self.input.val(ui.value);
+					self.setValueAndReload (ui.value);
+				},
+				slide: function(event, ui) {
+					self.lock = true;
+					self.input.val(ui.value);
+					self.setValueAndReload (ui.value);
+				}
+			}); 
+		}
+		if (this.noRange) {
+			this.label.append("<div class='window-management var-management'>"+
+			"<div class='mng-refresh-var mng-button'>&#xe805;</div>"+
+			"<div class='mng-remove-var mng-button'>&#xe804;</div>"+
+			"</div>");
+		}
 		this.input.change(function () {
 			self.lock = false;
-			self.input.val(ui.value);
 			self.setValueAndReload (self.input.val());
 		});
 	}
@@ -411,8 +438,9 @@ input {
 				},
 				init : function (wnd) {
 					this.wnd=wnd;
-					var varWindow = new VariableWindow (wnd.element);
+					var varWindow = new VariableWindow (wnd.content);
 					this.varWindow = varWindow;
+					wnd.content.css('margin','0px 10px, 0px, 10px');
 					editor.registerListener (this);
 				}
 			}));
@@ -472,30 +500,30 @@ input {
 	});
 	
 	//TESTING WINDOWS
-	
+	//~ 
 	var windowContainer = $("#window-rail");
-        var windowsManager = new WindowsManager (windowContainer);
-        var i=0;
+    var windowsManager = new WindowsManager (windowContainer);
+       
       
-	$("#addWindow").click (function () {
-		var wnd = new Window ({
-			close:true,
-			closeIcon:'&#xe804;',
-			toggle:true,
-			toggleUpIcon:'&#xe801;',
-			toggleDownIcon:'&#xe800;',
-			moveable:true,
-			moveUpIcon:'&#xe803;',
-			moveDownIcon:'&#xe802;',
-			resizable:true,
-			title:i++,
-			refresh : function (wnd) {
-				
-			}
-		});
-		windowsManager.add(wnd);
-		wnd.content.append ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a urna tortor. Cras sagittis ut risus vitae gravida. Aenean eu sem velit. Mauris rutrum, dui vitae pellentesque aliquam, arcu massa bibendum justo, consequat sagittis lectus ex luctus lacus. Sed at ipsum lectus. Integer aliquet sit amet dui at aliquet. Nam arcu orci, sodales id nunc non, aliquam congue nisi. Donec laoreet quam est, in congue mass");
-	});
+	//~ $("#addWindow").click (function () {
+		//~ var wnd = new Window ({
+			//~ close:true,
+			//~ closeIcon:'&#xe804;',
+			//~ toggle:true,
+			//~ toggleUpIcon:'&#xe801;',
+			//~ toggleDownIcon:'&#xe800;',
+			//~ moveable:true,
+			//~ moveUpIcon:'&#xe803;',
+			//~ moveDownIcon:'&#xe802;',
+			//~ resizable:true,
+			//~ title:i++,
+			//~ refresh : function (wnd) {
+				//~ 
+			//~ }
+		//~ });
+		//~ windowsManager.add(wnd);
+		//~ wnd.content.append ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a urna tortor. Cras sagittis ut risus vitae gravida. Aenean eu sem velit. Mauris rutrum, dui vitae pellentesque aliquam, arcu massa bibendum justo, consequat sagittis lectus ex luctus lacus. Sed at ipsum lectus. Integer aliquet sit amet dui at aliquet. Nam arcu orci, sodales id nunc non, aliquam congue nisi. Donec laoreet quam est, in congue mass");
+	//~ });
 
 </script>
 

@@ -81,7 +81,7 @@ var Window = function (setup) {
                 window.index = this.windows.push(window) - 1;
                 this.container.append("<div id='window-" + this.name + "-num-" + window.index + "' class='bs-window' data-index='"+window.index+"'></div>");
                 window.element = this.container.find ($("#window-" + this.name + "-num-" + window.index)).first();	
-                window.element[0].__hwnd = window; //easydebug :D
+               // window.element[0].__hwnd = window; //easydebug :D
                 window.init ();
         } 
         

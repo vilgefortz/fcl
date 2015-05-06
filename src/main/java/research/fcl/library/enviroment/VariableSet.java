@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 public class VariableSet extends ArrayList<Variable>{
 	
-	private Logger log = Logger.getLogger(this.getClass().toGenericString());
+	protected Logger log = Logger.getLogger(this.getClass().toGenericString());
 	
 	public Variable getVariable (String name) {
 		int index = -1;
