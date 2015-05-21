@@ -9,6 +9,8 @@
 	<link rel="stylesheet" href="css/windowmanager/fontello.css" />
 	<link rel="stylesheet" href="css/windowmanager/windowsmanager.css" />
 	<script src="scripts/lib/windowmanager/windowmanager.js" type="text/javascript"></script>
+	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.js"></script>
+	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.resize.js"></script>
 	
 <style>
 #resizable {
@@ -81,6 +83,7 @@ input {
 		<div id="toolbox" class="toolbox">
 			<button class='treeWindowButton'>TREE</button>
 			<button class='varWindowButton'>VAR</button>
+			<button class='chartWindowButton'>CHART</button>
 		</div>
 		<div id="resizable">
 			<h3 class="ui-widget-header">FCL Editor</h3>
@@ -97,6 +100,19 @@ input {
 
 
 <script>
+//default chart options
+var options = {
+			lines: {
+				show: true
+			},
+			points: {
+				show: false
+			},
+			xaxis: {
+				tickDecimals: 0,
+				tickSize: 1
+			}
+		};
 	//	var mainData;
 	//~ var env;
 	//~ var refreshEnviromentData = function(callback) {
@@ -246,7 +262,7 @@ input {
 		}
 		editor.registerListener = function (fun) {
 			var index = this.registeredListeners.push(fun);
-			fun.index = index
+			fun.index = index;
 		}
 		reloadEditor();
 	});
@@ -455,6 +471,66 @@ input {
 	});
 	
 	
+	//chart mwah
+	var chartVisible = false;
+	$(document).ready (function () {
+		var addChartWindow = function () {
+			if (varVisible) return;	//if window is already shown return without showing it again 
+			chartVisible = true;
+			windowsManager.add (new Window ({
+				editor : editor,
+				close:true,	
+				closeIcon:'&#xe804;',
+				closing : function (wnd) {
+					chartVisible=false;
+				},
+				toggle:true,
+				toggleUpIcon:'&#xe801;',
+				toggleDownIcon:'&#xe800;',
+				moveable:true,
+				moveUpIcon:'&#xe803;',
+				moveDownIcon:'&#xe802;',
+				resizable:true,
+				title:'ENVIROMENT',
+				refresh : function () {
+					this.chartWindow.reload ();
+				},
+				init : function (wnd) {
+					this.wnd=wnd;
+					var chartWindow = new ChartWindow (wnd, "App?action=getTermsData&fb=Fuzzy_FB&term=hot&term=cold&var=temp");
+					this.chartWindow = chartWindow;
+					wnd.content.css('margin','0px 10px, 0px, 10px');
+					editor.registerListener (this);
+				}
+			}));
+		};
+		//addVariableWindow();
+		$(".chartWindowButton").click (addChartWindow);
+	});
+	var ChartWindow = function (wnd, url) {
+		var self = this;
+		this.wnd = wnd;
+		this.url = url;
+		this.resizeMark = false;
+		$.post (url, null, function (data) {
+				wnd.content.css ("height",300);
+				self.data = $.parseJSON(data);
+				$.plot(wnd.content, self.data.terms, options);
+				wnd.resizable.resize(function(){
+					self.resize();
+				});
+			});
+	};
+	ChartWindow.prototype.resize = function () {
+		var self = this;
+		if (self.resizeMark) return;
+		window.setTimeout (function () {
+			self.resizeMark = false;
+			self.wnd.content.css ("height",self.wnd.resizable.css("height"));
+			$.plot(self.wnd.content, self.data.terms, options);
+		},30);
+		self.resizeMark = true;
+	}
 	
 	//TREE WINDOW requires global variables editor (ACE) 
 	//to enable requires DOM element with class treeWindowButton
@@ -477,8 +553,15 @@ input {
 				moveUpIcon:'&#xe803;',
 				moveDownIcon:'&#xe802;',
 				resizable:true,
+				//
+				setupTermListeners: function () {
+					$(".term_node").off('click').on('click', function () {
+						var variable
+					});
+				},
 				title:'PROJECT TREE',
 				refresh : function () {
+					var self = this;
 					wnd=this.wnd;
 					$.post("App?action=getTreeData", null, function(data) {
 						var tree = wnd.content;
@@ -486,6 +569,7 @@ input {
 						tree.bind("loaded.jstree", function (event, data) {
 							tree.jstree("open_all");
 							tree.jstree().redraw(true);
+							self.setupTermListeners()
 						});
 						var treeData = $.parseJSON(data);		
 						tree.jstree( { 
@@ -493,6 +577,7 @@ input {
 								'data' : treeData
 							} 
 						});
+						self.setupTermListeners ();
 					});	
 				},	
 				init : function (wnd) {
