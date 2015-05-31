@@ -64,6 +64,7 @@ public class App extends HttpServlet {
 		dispatchMap.put ("getTreeData", Tree::getTreeData);
 		dispatchMap.put ("getTermsData", TermEndpoint::getTerms);
 		dispatchMap.put ("remove-var", Variables::removeVariable);
+		dispatchMap.put ("getTerms", Variables::getTerms);
 		ApplicationResponseAction action = dispatchMap.get(actionString);
 		if (action != null) pw.write(action.action(request, response, app));
 		else pw.write("404");

@@ -8,11 +8,48 @@
 	<script src="scripts/lib/ace/src-noconflict/ace.js"	type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" href="css/windowmanager/fontello.css" />
 	<link rel="stylesheet" href="css/windowmanager/windowsmanager.css" />
-	<script src="scripts/lib/windowmanager/windowmanager.js" type="text/javascript"></script>
+	<script src="scripts/lib	/windowmanager/windowmanager.js" type="text/javascript"></script>
 	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.js"></script>
 	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.resize.js"></script>
 	
 <style>
+.context-menu-item:hover {
+	cursor:hand;
+	cursor:pointer;
+}
+.context-menu {
+	margin-left:40px;
+	position: absolute;
+	opacity:0,9;
+	background-color:white;
+	border: medium solid;
+	padding: 10px;
+	display: block;
+	z-index: 3;
+}
+
+.term-tab {
+    background-color: white;
+    border-bottom: medium solid;
+    opacity: 0.9;
+    position: absolute;
+    top:0px;
+    left:0px;
+    padding: 5px 15px 0px 0px;
+    width: 100%;
+    z-index: 2;
+}
+.term-tab > span {
+	margin: 2px 3px 2px 10px;
+	display:block;
+}
+
+.set-terms {
+	margin : 5px;
+}
+.show-terms {
+	background-color:red;
+}
 #resizable {
 	width: 100%;
 	height: 500px;
@@ -236,7 +273,14 @@ var options = {
 		} ]);
 	}
 	var editNotification = false;
+	var edited = false;
 	var editor = null;
+	var previousRefreshEventx
+	var lastRefreshEvent
+	var Refresher = function () {
+		this.valid = true;
+	}
+	
 	
 	
 	$(document).ready(function() {
@@ -244,11 +288,11 @@ var options = {
 		editor = ace.edit("editor");
 		editor.setTheme("ace/theme/monokai");
 		editor.getSession().on('change', function() {
+			edited = false;
+			if (editNotification) edited = true;
 			if (!editNotification) {
-				editNotification = true;
-				window.setTimeout(function() {
-					reloadEditor();
-				}, 1000);
+				if (editor.timeoutId) window.clearTimeout(editor.timeoutId);
+				editor.timeoutId = window.setTimeout( function () { reloadEditor(); } , 2000);
 			}
 		});
 		$("#resizable").resizable	({
@@ -470,13 +514,48 @@ var options = {
 		$(".varWindowButton").click (addVariableWindow);
 	});
 	
+	var ContextMenu = function (options,element) {	this.element = element;
+		this.options = options;
+	};
 	
-	//chart mwah
-	var chartVisible = false;
-	$(document).ready (function () {
-		var addChartWindow = function () {
-			if (varVisible) return;	//if window is already shown return without showing it again 
-			chartVisible = true;
+	
+	ContextMenu.prototype.open = function () {
+		var self = this;
+		this.menu = $("<div class='context-menu' style='display:none'></div>");
+		$(this.element).parent().prepend (this.menu);
+		this.menu.show('fast');
+		$(document).on ('mouseup', function (e) {
+			if (!self.menu.is(e.target) && self.menu.has(e.target).length === 0) {
+				self.close();
+			}
+		});
+		$.each (self.options.items, function (key,value) {
+			self.renderMenuOption (value);
+		});
+	}
+	
+	ContextMenu.prototype.renderMenuOption = function (option) {
+		var self = this;
+		var item = $("<div class='context-menu-item'>"+option.label+"</div>");
+		self.menu.append(item);
+		if (option.click) $(item).click(function () {
+			option.click (self.options.params);
+		});
+		$(item).click(function () {
+			self.close();	
+		});
+	}
+	
+	ContextMenu.prototype.close = function () {
+		this.menu.hide('fast');
+		var self = this;
+		window.setTimeout( function () {
+			self.menu.remove();
+		}, 200);
+		$("document").off('mouseup');
+	}
+	
+	var addChartWindow = function (fb,variable) {
 			windowsManager.add (new Window ({
 				editor : editor,
 				close:true,	
@@ -491,43 +570,128 @@ var options = {
 				moveUpIcon:'&#xe803;',
 				moveDownIcon:'&#xe802;',
 				resizable:true,
-				title:'ENVIROMENT',
+				title:'Variable : ' + variable,
 				refresh : function () {
 					this.chartWindow.reload ();
 				},
 				init : function (wnd) {
 					this.wnd=wnd;
-					var chartWindow = new ChartWindow (wnd, "App?action=getTermsData&fb=Fuzzy_FB&term=hot&term=cold&var=temp");
+					var chartWindow = new ChartWindow (wnd,variable,fb);
 					this.chartWindow = chartWindow;
 					wnd.content.css('margin','0px 10px, 0px, 10px');
 					editor.registerListener (this);
 				}
 			}));
 		};
+	//chart mwah
+	var chartVisible = false;
+	$(document).ready (function () {
 		//addVariableWindow();
 		$(".chartWindowButton").click (addChartWindow);
 	});
-	var ChartWindow = function (wnd, url) {
+	var ChartWindow = function (wnd, variable,fb) {
+		this.variable = variable
+		this.fb=fb;
 		var self = this;
-		this.wnd = wnd;
-		this.url = url;
+		this.wnd = wnd;		
+		this.terms = Array ();
 		this.resizeMark = false;
-		$.post (url, null, function (data) {
-				wnd.content.css ("height",300);
+		$.post ('App?action=getTerms', {variable:variable,fb:fb}, function (data) {
+			if (data == 'false') return;
+			data = $.parseJSON (data);
+			$.each(data, function (key, term) {
+				self.terms.push (term.name);
+			});
+			self.enabledTerms = self.terms;
+			self.tab = $("<div class='term-tab' style='display:none'></div>")
+			wnd.resizable.prepend (self.tab);
+			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
+			$.each (self.terms, function (key, term) {
+				var checked = self.enabledTerms.indexOf(term)>=0 ? "checked=''" : "";
+				self.tab.append("<span><input type='checkbox' " + checked + " name='" + term + "' />" + term + "<br /></span>");				
+			});
+			self.tab.append ("<span><button class='set-terms set-terms-show'>Show</button><button class='set-terms set-terms-cancel'>Cancel</button></span>");
+	
+			self.addTabListeners ();
+			wnd.navigation.prepend("<div class='mng-button show-terms'>&#xe800</div>");
+			wnd.navigation.find('.show-terms').first().click (function () {
+				self.tab.show('fast');
+			});
+			//getting chart data
+			$.post (self.generateUrl (fb,variable,self.enabledTerms), null, function (data) {
+				wnd.content.css ("height",150);
 				self.data = $.parseJSON(data);
 				$.plot(wnd.content, self.data.terms, options);
 				wnd.resizable.resize(function(){
 					self.resize();
 				});
 			});
+		});
 	};
+	ChartWindow.prototype.generateUrl = function (fb,varname,terms) {
+		var url = "App?action=getTermsData&fb="+fb+"&var="+varname;
+		$.each(terms, function (key, term) {
+			url += "&term=" + term;
+		});
+		return url;
+	};
+	ChartWindow.prototype.loadTerms  = function () {
+		var self = this;
+		$.post ('App?action=getTerms', {variable:this.variable,fb:this.fb}, function (data) {
+			if (data == 'false') return;
+			data = $.parseJSON (data);
+			self.terms = [];
+			$.each(data, function (key, term) {
+				self.terms.push (term.name);
+			});
+			self.tab.empty();
+			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
+			$.each (self.terms, function (key, term) {
+				var checked = self.enabledTerms.indexOf(term)>=0 ? "checked=''" : "";
+				self.tab.append("<span><input type='checkbox' " + checked + " name='" + term + "' />" + term + "<br /></span>");				
+			});
+			self.tab.append ("<span><button class='set-terms set-terms-show'>Show</button><button class='set-terms set-terms-cancel'>Cancel</button></span>");
+			self.addTabListeners ();
+		});
+	};	
+	
+	ChartWindow.prototype.addTabListeners = function () {
+		var self = this;
+		var show = self.tab.find('.set-terms-show').first();
+		var cancel = self.tab.find('.set-terms-cancel').first();
+		show.click (function (e) {
+			self.enabledTerms = [];
+			self.tab.find(':checked').each (function (key, element) {
+				self.enabledTerms.push ($(element).attr('name'));
+			});
+			self.tab.hide('fast');
+			self.reload ();
+		});
+		cancel.click (function (e) {
+			self.tab.hide('fast');
+		});
+	};
+	
+	ChartWindow.prototype.reload = function () {
+		var self = this;
+		$.post (this.generateUrl (this.fb,this.variable,this.enabledTerms), null, function (data) {
+			self.data = $.parseJSON(data);
+			if (self.data.error != "") {
+				self.wnd.content.html(self.data.error);
+			} else 
+			self.wnd.content.empty(); //html('');
+			$.plot(self.wnd.content, self.data.terms, options);
+		});
+		self.loadTerms();
+	}
+	
 	ChartWindow.prototype.resize = function () {
 		var self = this;
 		if (self.resizeMark) return;
 		window.setTimeout (function () {
 			self.resizeMark = false;
 			self.wnd.content.css ("height",self.wnd.resizable.css("height"));
-			$.plot(self.wnd.content, self.data.terms, options);
+			if (self.data.error == "") $.plot(self.wnd.content, self.data.terms, options);
 		},30);
 		self.resizeMark = true;
 	}
@@ -537,7 +701,7 @@ var options = {
 	var treeVisible = false;
 	$(document).ready (function () {
 		$(".treeWindowButton").click (function () {
-			if (treeVisible) return;	//if window is already shown return without showing it again 
+			if (treeVisible) return;	//if window is already shown return without showing it	 again 
 			treeVisible = true;
 			windowsManager.add (new Window ({
 				editor : editor,
@@ -553,12 +717,45 @@ var options = {
 				moveUpIcon:'&#xe803;',
 				moveDownIcon:'&#xe802;',
 				resizable:true,
-				//
-				setupTermListeners: function () {
-					$(".term_node").off('click').on('click', function () {
-						var variable
-					});
+				showVariableContextMenu : function (fb,varname,element) {
+					var options = {
+						title : varname + " menu :",
+						params : {
+							fb : fb,
+							varname : varname,
+							element : element,
+						},
+						items : [
+							{ 
+								label : "<a class='show-chart-item' onclick='return false;'>Show chart</a>",
+								click : function (params) { 
+									addChartWindow (params.fb, params.varname);
+								}
+							}
+						]
+					};
+					var cm = new ContextMenu (options,element);
+					cm.open();
 				},
+				
+				//setupTermListeners: function () {
+					//var self = this;
+					//$(".term_node").off('click').on('click', function () {
+						//var variable
+					//});
+					//$(".input-var").off('click').on('click', function (e) {
+						////e.stopPropagation();
+						
+					//});
+					//$(".inline-var").off('click').on('click', function (e) {
+////						e.stopPropagation();
+						//self.showVariableContextMenu ($(this).attr('data-function_block'),$(this).attr('name'),this);
+					//});
+					//$(".output-var").off('click').on('click', function (e) {
+
+						//self.showVariableContextMenu ($(this).attr('data-function_block'),$(this).attr('name'),this);
+					//});
+				//},
 				title:'PROJECT TREE',
 				refresh : function () {
 					var self = this;
@@ -566,10 +763,18 @@ var options = {
 					$.post("App?action=getTreeData", null, function(data) {
 						var tree = wnd.content;
 						tree.jstree("destroy");
+						tree.bind ('select_node.jstree', function (node,selected) {
+							var id = selected.node.id;
+							var anchorId= id + "_anchor";
+							var nodeElement = $("#" + anchorId);
+							if (nodeElement.hasClass('var-node')) {
+								self.showVariableContextMenu (nodeElement.attr('data-function_block'),nodeElement.attr('name'),nodeElement);
+							}
+						});
 						tree.bind("loaded.jstree", function (event, data) {
 							tree.jstree("open_all");
 							tree.jstree().redraw(true);
-							self.setupTermListeners()
+					//		self.setupTermListeners()
 						});
 						var treeData = $.parseJSON(data);		
 						tree.jstree( { 
@@ -577,7 +782,7 @@ var options = {
 								'data' : treeData
 							} 
 						});
-						self.setupTermListeners ();
+						//0elf.setupTermListeners ();
 					});	
 				},	
 				init : function (wnd) {
@@ -604,6 +809,7 @@ var options = {
 			//~ toggleDownIcon:'&#xe800;',
 			//~ moveable:true,
 			//~ moveUpIcon:'&#xe803;',
+			
 			//~ moveDownIcon:'&#xe802;',
 			//~ resizable:true,
 			//~ title:i++,

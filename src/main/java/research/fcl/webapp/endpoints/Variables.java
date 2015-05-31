@@ -3,6 +3,7 @@ package research.fcl.webapp.endpoints;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +11,9 @@ import javax.servlet.http.HttpSession;
 
 import research.fcl.library.Application;
 import research.fcl.library.enviroment.Enviroment;
+import research.fcl.library.variable.term.Term;
+import research.fcl.library.variables.BaseFunctionVariable;
+import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.webapp.endpoints.dto.DefaultGsonMapper;
 
 public class Variables {
@@ -64,5 +68,22 @@ public class Variables {
 			e.printStackTrace();
 			return "false";
 		}
+	}
+	public static String getTerms (HttpServletRequest request,
+			HttpServletResponse response, Application app) {
+		try {
+			String varName = request.getParameter("variable");
+			String fbName = request.getParameter("fb");
+			HttpSession session = request.getSession();
+			FunctionBlock fb = app.getFunctionBlock(fbName);
+			BaseFunctionVariable variable = fb.getVariable(varName);
+			List<Term> terms = variable.getTerms();
+			DefaultGsonMapper mapper = new DefaultGsonMapper(terms);
+			return mapper.toJson();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "false";	
+		}
+		
 	}
 }

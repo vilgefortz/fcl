@@ -61,8 +61,9 @@ public class JsTreeNodeMapper {
 		JsTreeNode node = new JsTreeNode ();
 		node.setText(var.toString());
 		node.getChildren().add(mapNormalTerms (var,NORMAL_TERMS_NAME));
-		node.getLi_attr().classAttr="input-var";
-		node.getLi_attr().value=var.getName();
+		node.getA_attr().classAttr="var-node input-var";
+		node.getA_attr().name=var.getName();
+		node.getA_attr().functionBlock=var.getFunctionBlock().getName();
 		return node;
 	}
 
@@ -85,9 +86,10 @@ public class JsTreeNodeMapper {
 		JsTreeNode node = new JsTreeNode ();
 		node.setText(var.toString());
 		node.getChildren().add(mapNormalTerms (var,NORMAL_TERMS_NAME));
-		if (var instanceof InlineVariable) node.getLi_attr().classAttr="inline-var";
-		else node.getLi_attr().classAttr="output-var";
-		node.getLi_attr().value=var.getName();
+		if (var instanceof InlineVariable) node.getA_attr().classAttr="var-node 	inline-var";
+		else node.getA_attr().classAttr="var-node output-var";
+		node.getA_attr().name=var.getName();
+		node.getA_attr().functionBlock=var.getFunctionBlock().getName();
 		return node;
 	}
 }
