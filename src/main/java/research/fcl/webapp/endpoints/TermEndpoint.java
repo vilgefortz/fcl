@@ -45,12 +45,12 @@ public class TermEndpoint {
 				return createErrorJson ("Term names not provided");
 			}
 			for (String name : termNames) {
-				terms.add(variable.getTerm(name));
+				terms.add(variable.getTermFromAll(name));
 			}
 			return new DefaultGsonMapper (new TermPointsDto(variable, terms,res)).toJson();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return createErrorJson (e.getMessage());
-			
 		}
 	}
 }

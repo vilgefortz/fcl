@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,9 @@ import research.fcl.library.variable.term.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.webapp.endpoints.dto.DefaultGsonMapper;
+
+import research.fcl.library.variables.OutputVariable;
+import research.fcl.library.variables.InputVariable;
 
 public class Variables {
 	public static String setVariable(HttpServletRequest request,
@@ -77,8 +81,8 @@ public class Variables {
 			HttpSession session = request.getSession();
 			FunctionBlock fb = app.getFunctionBlock(fbName);
 			BaseFunctionVariable variable = fb.getVariable(varName);
-			List<Term> terms = variable.getTerms();
-			DefaultGsonMapper mapper = new DefaultGsonMapper(terms);
+			List<Term> termsList = variable.getAllTerms();
+			DefaultGsonMapper mapper = new DefaultGsonMapper(termsList);
 			return mapper.toJson();
 		} catch (Exception e) {
 			e.printStackTrace();

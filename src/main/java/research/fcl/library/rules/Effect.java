@@ -8,11 +8,11 @@ import research.fcl.library.variables.OutputVariable;
 
 public abstract class Effect {
 	public OutputVariable var;
-
-	public Effect(BaseFunctionVariable v) throws RuleParsingException {
+	public Rule rule;
+	public Effect(Rule r, BaseFunctionVariable v) throws RuleParsingException {
 		try {
 			this.var = (OutputVariable) v;
-
+			this.rule = r;
 		} catch (Exception e) {
 			throw new RuleParsingException("Variable '" + v
 					+ "' cannot be defuzzified");

@@ -13,6 +13,7 @@ import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.library.rules.Rule;
 import research.fcl.library.variable.term.Term;
 import research.fcl.library.variable.term.TermDeclarationErrorException;
+import research.fcl.library.variable.term.types.SingletonTerm;
 
 import com.google.gson.annotations.Expose;
 
@@ -31,6 +32,7 @@ public class BaseFunctionVariable implements Observer,Serializable {
 				append("]").
 				toString();
 	}
+	public static final String VALUE_TERM = "@value";
 	private static final long serialVersionUID = 6809124754964817287L;
 	protected FunctionBlock fb;
 	protected String name;
@@ -69,7 +71,6 @@ public class BaseFunctionVariable implements Observer,Serializable {
 			this.var = this.fb.getEnv().getVariable(name);
 		this.name = name;
 	}
-
 	public double getValue() {
 		return fb.getEnv().getValueOf(name);
 	}
@@ -93,6 +94,7 @@ public class BaseFunctionVariable implements Observer,Serializable {
 		this.terms.add(term);
 		this.min = Math.min(this.min, term.getMin());
 		this.max = Math.max(this.max, term.getMax());
+		this.setValue (Math.max (this.min, this.getValue()));
 
 	}
 
@@ -103,10 +105,13 @@ public class BaseFunctionVariable implements Observer,Serializable {
 	public boolean hasTerm(String word) {
 		return this.terms.contains(Term.getDummy(word));
 	}
-
+	public Term getTermFromAll (String name) throws TermNotFoundException {
+		if (name.equals(BaseFunctionVariable.VALUE_TERM)) return new SingletonTerm (BaseFunctionVariable.VALUE_TERM, var.getValue());
+		return getTerm (name);
+	}
 	public Term getTerm(String word) throws TermNotFoundException {
 		try {
-		return this.terms.get(this.terms.indexOf(Term.getDummy(word)));
+			return this.terms.get(this.terms.indexOf(Term.getDummy(word)));
 		}
 		catch (IndexOutOfBoundsException e) {
 			throw new TermNotFoundException (word,this.name);
@@ -173,7 +178,12 @@ public class BaseFunctionVariable implements Observer,Serializable {
 	public List<Term> getTerms() {
 		return this.terms;
 	}
-
+	public List<Term> getAllTerms () {
+		List<Term> allTerms = new ArrayList<Term> ();
+		allTerms.addAll (this.getTerms());
+		allTerms.add (new SingletonTerm (BaseFunctionVariable.VALUE_TERM, var.getValue()));
+		return allTerms;
+	}
 	public FunctionBlock getFunctionBlock() {
 		return this.fb;
 	}

@@ -9,12 +9,12 @@ public class NormalEffect extends Effect {
 	private Term term;
 	@Expose
 	private String type = "normal";
-	public NormalEffect(Term t, BaseFunctionVariable v) throws RuleParsingException {
-		super (v);
+	public NormalEffect(Rule r, Term t, BaseFunctionVariable v) throws RuleParsingException {
+		super (r,v);
 		this.term = t;
 	}
 	
 	public Term getTerm(double level) {
-		return new CutTerm (level,this.term);
+		return new CutTerm (this.rule.getName(), level,this.term);
 	}
 }

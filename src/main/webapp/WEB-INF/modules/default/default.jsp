@@ -10,13 +10,28 @@
 	<link rel="stylesheet" href="css/windowmanager/windowsmanager.css" />
 	<script src="scripts/lib	/windowmanager/windowmanager.js" type="text/javascript"></script>
 	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.js"></script>
-	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.resize.js"></script>
+	<script language="javascript" type="text/javascript" src="sc 	ripts/lib/flot/jquery.flot.resize.js"></script>
 	
 <style>
 .context-menu-item:hover {
 	cursor:hand;
 	cursor:pointer;
 }
+.zoomed {
+
+ width:500px;
+ height:500px;
+ margin:0 auto;
+ background:#f7f7f7;
+ position:absolute;
+ left:50%;
+ top:50%;
+ margin-left:-250px;
+ margin-top:-250px;
+ z-index:10;
+}
+	
+
 .context-menu {
 	margin-left:40px;
 	position: absolute;
@@ -101,11 +116,6 @@ input {
 	width:94%;
 }
 
-/*
-.var-send-div {
-	width:70%
-}*/
-
 .var-send-input {
 	width:37%;
 	margin-right:3%;
@@ -119,8 +129,8 @@ input {
 	<div class="col-md-8 editor">
 		<div id="toolbox" class="toolbox">
 			<button class='treeWindowButton'>TREE</button>
-			<button class='varWindowButton'>VAR</button>
-			<button class='chartWindowButton'>CHART</button>
+			<button class='varWindowButton'>VARIABLES</button>
+			<span><input type='checkbox' id='autorefresh' checked />Autorefresh</span>
 		</div>
 		<div id="resizable">
 			<h3 class="ui-widget-header">FCL Editor</h3>
@@ -146,103 +156,36 @@ var options = {
 				show: false
 			},
 			xaxis: {
-				tickDecimals: 0,
-				tickSize: 1
+				//tickDecimals: 0,
+				//StickSize: 1
 			}
 		};
-	//	var mainData;
-	//~ var env;
-	//~ var refreshEnviromentData = function(callback) {
-		//~ $.post("App?action=getEnviroment", null, function(data) {
-			//~ env = $.parseJSON(data);
-			//~ refreshVariableDiv();
-			//~ if (callback)
-				//~ callback();
-		//~ });
-	//~ };
-	//~ var refreshVariableDiv = function() {
-		//~ $("#varDiv").text("");
-		//~ var text = "Variables :<br>";
-		//~ $
-				//~ .each(
-						//~ env,
-						//~ function(key, value) {
-							//~ text += value.name;
-							//~ text += "<input title='Wprowadź liczbę' pattern='-?[0-9]*\.?[0-9]+' class='variable-input' id='var-"
-									//~ + key
-									//~ + "' name='"
-									//~ + value.name
-									//~ + "' value='" + value.value + "'><br>";
-						//~ });
-		//~ var changingVariable;
-		//~ $("#varDiv").append(text);
-		//~ $(".variable-input").keyup(function() {
-			//~ if (changingVariable != null)
-				//~ return;
-			//~ changingVariable = this;
-			//~ window.setTimeout(function() {
-				//~ var id = $(changingVariable).attr('id');
-				//~ changingVariable = null;
-				//~ id = /-.*/.exec(id);
-				//~ id = ("" + id).substring(1);
-				//~ var val = $("#var-" + id).val();
-				//~ val = parseFloat(val);
-				//~ if (val === env[id].value)
-					//~ return;
-				//~ var name = env[id].name;
-				//~ $.post("App?action=setVariable", {
-					//~ "name" : name,
-					//~ "value" : val
-				//~ }, function(data) {
-					//~ if (data == "null") {
-						//~ reloadEditor();
-					//~ } else {
-						//~ refreshVariables();
-					//~ }
-				//~ });
-//~ 
-			//~ }, 1500);
-		//~ });
-	//~ };
-	//~ var refreshVariables = function() {
-		//~ refreshEnviromentData(function() {
-			//~ $.each(env, function(key, value) {
-				//~ if (value.value !== $("#var-" + key).val())
-					//~ $("#var-" + key).val(value.value);
-			//~ });
-		//~ });
-	//~ };
 
-	//~ var refreshTree = function() {
-		//~ $.post("App?action=getTreeData", null, function(data) {
-			//~ var tree = $("#tree");
-			//~ tree.jstree("destroy");
-			//~ tree.bind("loaded.jstree", function (event, data) {
-		        //~ tree.jstree("open_all");
-		    //~ });
-			//~ var treeData = $.parseJSON(data);
-			//~ tree.jstree({ 'core' : {
-			    //~ 'data' : treeData
-			       //~ } });
-			//~ tree.jstree().redraw(true);
-		//~ });
-	//~ }
-
-	//~ var refreshIDE = function() {
-		//~ refreshEnviromentData();
-	//~ //	refreshTree();
-		//~ getErrors();
-	//~ }
-
+	var Variables = {
+		registeredListeners : [],
+		removeListener : function (fun) {
+			if (fun._indexVar >= 0) this.registeredListeners.splice (fun._indexVar,1);	
+		},
+		registerListener : function (fun) {
+			var index = this.registeredListeners.push(fun) - 1 ;
+			fun._indexVar = index;
+		},
+		fireChange : function () {
+			$.each (this.registeredListeners, function (key, obj) {
+				if (obj.onVariableChange) obj.onVariableChange();
+			});
+		},	
+	}
+	
 	var reloadEditor = function() {
 		$.post("Gateway", {
 			data : editor.getSession().getValue()
 		}, function(value) {
 			if (editor.registeredListeners.length > 0) 
-				$.each (editor.registeredListeners, function (key, obj) {
-					obj.refresh();
-				});
-			editNotification = false;
+				if (autorefresh)
+					$.each (editor.registeredListeners, function (key, obj) {
+						obj.refresh();
+					});
 			getErrors (null);
 		});
 	};
@@ -277,23 +220,22 @@ var options = {
 	var editor = null;
 	var previousRefreshEventx
 	var lastRefreshEvent
+	var autorefresh = true;
 	var Refresher = function () {
 		this.valid = true;
 	}
 	
-	
+	$("#autorefresh").click (function () {
+		autorefresh = $(this).prop('checked');
+	});
 	
 	$(document).ready(function() {
 		editNotification = false;
 		editor = ace.edit("editor");
 		editor.setTheme("ace/theme/monokai");
 		editor.getSession().on('change', function() {
-			edited = false;
-			if (editNotification) edited = true;
-			if (!editNotification) {
-				if (editor.timeoutId) window.clearTimeout(editor.timeoutId);
-				editor.timeoutId = window.setTimeout( function () { reloadEditor(); } , 2000);
-			}
+			if (editor.timeoutId) window.Timeout(editor.timeoutId);
+			editor.timeoutId = window.setTimeout( function () { reloadEditor(); } , 2000);
 		});
 		$("#resizable").resizable	({
 			resize : function(event, ui) {
@@ -302,11 +244,11 @@ var options = {
 		});
 		editor.registeredListeners = [];
 		editor.removeListener = function (fun) {
-			if (fun.index) this.registeredListeners.splice (fun.index,1);	
+			if (fun._index >= 0) this.registeredListeners.splice (fun._index,1);	
 		}
 		editor.registerListener = function (fun) {
-			var index = this.registeredListeners.push(fun);
-			fun.index = index;
+			var index = this.registeredListeners.push(fun) - 1;
+			fun._index = index;
 		}
 		reloadEditor();
 	});
@@ -355,6 +297,7 @@ var options = {
 				v.updateHtml ();
 			};
 		});
+		Variables.fireChange();
 		self.clearUnused();
 	};
 	VariableWindow.prototype.clearUnused = function () {
@@ -392,7 +335,7 @@ var options = {
 		this.lock = false // lock this value changes when sliding
 		this.hasChanged = true;
 		this.lockReload = false; //this value is setup true to notify that there is change about to be done
-		this.lockReloadDelay = 200;
+		this.lockReloadDelay = 100;
 	}
 	
 	Variable.prototype.updateValue = function (value) {
@@ -418,7 +361,7 @@ var options = {
 			"value" : self.tempValue,
 		}, function(data) {
 		if (data == "null") {
-						//reloadEditor();
+
 		} else {
 			self.parent.setEnviroment ($.parseJSON (data));
 			self.parent.redraw();
@@ -562,6 +505,7 @@ var options = {
 				closeIcon:'&#xe804;',
 				closing : function (wnd) {
 					chartVisible=false;
+					Variables.removeListener (this.chartWindow);
 				},
 				toggle:true,
 				toggleUpIcon:'&#xe801;',
@@ -578,17 +522,12 @@ var options = {
 					this.wnd=wnd;
 					var chartWindow = new ChartWindow (wnd,variable,fb);
 					this.chartWindow = chartWindow;
+					Variables.registerListener (this.chartWindow);
 					wnd.content.css('margin','0px 10px, 0px, 10px');
 					editor.registerListener (this);
 				}
 			}));
 		};
-	//chart mwah
-	var chartVisible = false;
-	$(document).ready (function () {
-		//addVariableWindow();
-		$(".chartWindowButton").click (addChartWindow);
-	});
 	var ChartWindow = function (wnd, variable,fb) {
 		this.variable = variable
 		this.fb=fb;
@@ -596,7 +535,13 @@ var options = {
 		this.wnd = wnd;		
 		this.terms = Array ();
 		this.resizeMark = false;
-		$.post ('App?action=getTerms', {variable:variable,fb:fb}, function (data) {
+		this.reloadAll();
+	};
+	ChartWindow.prototype.reloadAll = function () {
+		
+		var self = this;
+		var wnd = self.wnd
+		$.post ('App?action=getTerms', {variable:self.variable,fb:self.fb}, function (data) {
 			if (data == 'false') return;
 			data = $.parseJSON (data);
 			$.each(data, function (key, term) {
@@ -604,7 +549,7 @@ var options = {
 			});
 			self.enabledTerms = self.terms;
 			self.tab = $("<div class='term-tab' style='display:none'></div>")
-			wnd.resizable.prepend (self.tab);
+			self.wnd.resizable.prepend (self.tab);
 			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
 			$.each (self.terms, function (key, term) {
 				var checked = self.enabledTerms.indexOf(term)>=0 ? "checked=''" : "";
@@ -613,21 +558,35 @@ var options = {
 			self.tab.append ("<span><button class='set-terms set-terms-show'>Show</button><button class='set-terms set-terms-cancel'>Cancel</button></span>");
 	
 			self.addTabListeners ();
-			wnd.navigation.prepend("<div class='mng-button show-terms'>&#xe800</div>");
-			wnd.navigation.find('.show-terms').first().click (function () {
+			self.wnd.navigation.prepend("<div class='mng-button zoom-chart'>&#xe800</div><div class='mng-button show-terms'>&#xe800</div>");
+			self.wnd.navigation.find('.show-terms').first().click (function () {
 				self.tab.show('fast');
 			});
+			self.wnd.navigation.find('.zoom-chart').first().click (function () {
+				self.zoom();
+			});
 			//getting chart data
-			$.post (self.generateUrl (fb,variable,self.enabledTerms), null, function (data) {
-				wnd.content.css ("height",150);
+			$.post (self.generateUrl (self.fb,self.variable,self.enabledTerms), null, function (data) {
+				self.wnd.content.css ("height",150);
 				self.data = $.parseJSON(data);
 				$.plot(wnd.content, self.data.terms, options);
-				wnd.resizable.resize(function(){
+				self.wnd.resizable.resize(function(){
 					self.resize();
 				});
 			});
 		});
-	};
+	}
+	ChartWindow.prototype.zoom = function () {
+		var self = this;
+		var body = $("body");
+		body.prepend ("<div class='zoomed'><div class='window-header'><div class='window-title'>"+ 
+		self.variable + "</div><div class='window-management'><div class='mng-close mng-button'></div></div><div class='zoom-content'></div></div></div>");
+		var zoomed = body.find (".zoomed").first();
+		var close = zommed.find(".mng-close").first();
+		var content = zommed.find(".zoom-content").first();
+		if (self.data.error == "") $.plot(content, self.data.terms, options);
+	}
+
 	ChartWindow.prototype.generateUrl = function (fb,varname,terms) {
 		var url = "App?action=getTermsData&fb="+fb+"&var="+varname;
 		$.each(terms, function (key, term) {
@@ -644,7 +603,7 @@ var options = {
 			$.each(data, function (key, term) {
 				self.terms.push (term.name);
 			});
-			self.tab.empty();
+			self.tab.empty();	
 			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
 			$.each (self.terms, function (key, term) {
 				var checked = self.enabledTerms.indexOf(term)>=0 ? "checked=''" : "";
@@ -671,6 +630,17 @@ var options = {
 			self.tab.hide('fast');
 		});
 	};
+	ChartWindow.prototype.onVariableChange = function () {
+		var self = this;
+			$.post (this.generateUrl (this.fb,this.variable,this.enabledTerms), null, function (data) {
+			self.data = $.parseJSON(data);
+			if (self.data.error != "") {
+				self.wnd.content.html(self.data.error);
+			} else 
+			self.wnd.content.empty(); //html('');
+			$.plot(self.wnd.content, self.data.terms, options);
+		});
+	}
 	
 	ChartWindow.prototype.reload = function () {
 		var self = this;
@@ -736,33 +706,14 @@ var options = {
 					};
 					var cm = new ContextMenu (options,element);
 					cm.open();
-				},
-				
-				//setupTermListeners: function () {
-					//var self = this;
-					//$(".term_node").off('click').on('click', function () {
-						//var variable
-					//});
-					//$(".input-var").off('click').on('click', function (e) {
-						////e.stopPropagation();
-						
-					//});
-					//$(".inline-var").off('click').on('click', function (e) {
-////						e.stopPropagation();
-						//self.showVariableContextMenu ($(this).attr('data-function_block'),$(this).attr('name'),this);
-					//});
-					//$(".output-var").off('click').on('click', function (e) {
-
-						//self.showVariableContextMenu ($(this).attr('data-function_block'),$(this).attr('name'),this);
-					//});
-				//},
+				},	
 				title:'PROJECT TREE',
 				refresh : function () {
 					var self = this;
 					wnd=this.wnd;
 					$.post("App?action=getTreeData", null, function(data) {
 						var tree = wnd.content;
-						tree.jstree("destroy");
+						//tree.jstree("destroy");
 						tree.bind ('select_node.jstree', function (node,selected) {
 							var id = selected.node.id;
 							var anchorId= id + "_anchor";
@@ -774,7 +725,6 @@ var options = {
 						tree.bind("loaded.jstree", function (event, data) {
 							tree.jstree("open_all");
 							tree.jstree().redraw(true);
-					//		self.setupTermListeners()
 						});
 						var treeData = $.parseJSON(data);		
 						tree.jstree( { 
@@ -782,7 +732,6 @@ var options = {
 								'data' : treeData
 							} 
 						});
-						//0elf.setupTermListeners ();
 					});	
 				},	
 				init : function (wnd) {
@@ -799,27 +748,5 @@ var options = {
 	var windowContainer = $("#window-rail");
     var windowsManager = new WindowsManager (windowContainer);
        
-      
-	//~ $("#addWindow").click (function () {
-		//~ var wnd = new Window ({
-			//~ close:true,
-			//~ closeIcon:'&#xe804;',
-			//~ toggle:true,
-			//~ toggleUpIcon:'&#xe801;',
-			//~ toggleDownIcon:'&#xe800;',
-			//~ moveable:true,
-			//~ moveUpIcon:'&#xe803;',
-			
-			//~ moveDownIcon:'&#xe802;',
-			//~ resizable:true,
-			//~ title:i++,
-			//~ refresh : function (wnd) {
-				//~ 
-			//~ }
-		//~ });
-		//~ windowsManager.add(wnd);
-		//~ wnd.content.append ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam a urna tortor. Cras sagittis ut risus vitae gravida. Aenean eu sem velit. Mauris rutrum, dui vitae pellentesque aliquam, arcu massa bibendum justo, consequat sagittis lectus ex luctus lacus. Sed at ipsum lectus. Integer aliquet sit amet dui at aliquet. Nam arcu orci, sodales id nunc non, aliquam congue nisi. Donec laoreet quam est, in congue mass");
-	//~ });
-
 </script>
 

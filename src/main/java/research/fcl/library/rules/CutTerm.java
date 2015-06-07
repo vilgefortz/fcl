@@ -7,8 +7,8 @@ public class CutTerm extends Term {
 		private double level;
 		private Term term;
 
-		public CutTerm (double level,Term term) {
-			super(term.getName() + "_with_" + level);
+		public CutTerm (String name, double level,Term term) {
+			super("@rule-" + name);
 			this.level = level;
 			this.term = term;
 			this.min=getMin();
@@ -40,5 +40,7 @@ public class CutTerm extends Term {
 		public double[] getImportantPoints() {
 			return term.getImportantPoints();
 		};
+		
+		
 
 }

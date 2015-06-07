@@ -36,6 +36,9 @@ public class Rule implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getName () {
+		return this.name;
+	}
 
 	public Rule(String name) {
 		this.name = name;

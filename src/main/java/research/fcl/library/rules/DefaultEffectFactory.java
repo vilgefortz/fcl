@@ -37,7 +37,7 @@ public class DefaultEffectFactory {
 			String number = ParsingUtils.getFirstWord(text=text.substring(with.length()).trim(),"[\\.a-z0-9_]*");
 			try {
 				double level = Double.parseDouble(number);
-				eff = new WithEffect (level, t, var);
+				eff = new WithEffect (r, level, t, var);
 				with = ParsingUtils.getFirstWord(text=text.substring(number.length()).trim());
 			}
 			catch (Exception e) {
@@ -45,7 +45,7 @@ public class DefaultEffectFactory {
 			}
 		}
 		else {
-			eff = new NormalEffect(t, var);
+			eff = new NormalEffect(r, t, var);
 		}
 		if (with.equalsIgnoreCase(AND)) {
 			text = text.substring(with.length());

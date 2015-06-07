@@ -11,13 +11,13 @@ public class WithEffect extends Effect {
 	private double level;
 	@Expose
 	private String type = "with";
-	public WithEffect(double level, Term t, BaseFunctionVariable v) throws RuleParsingException {
-		super (v);
+	public WithEffect(Rule r, double level, Term t, BaseFunctionVariable v) throws RuleParsingException {
+		super (r,v);
 		this.level = level;
 		this.term = t;
 	}
 
 	public Term getTerm(double level) {
-		return new CutTerm (this.level,this.term);
+		return new CutTerm (this.rule.getName(), this.level,this.term);
 	}
 }

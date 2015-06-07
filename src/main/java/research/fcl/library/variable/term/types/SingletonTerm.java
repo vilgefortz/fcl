@@ -23,6 +23,13 @@ public class SingletonTerm extends Term {
 		this.min = point;
 
 	}
+	public SingletonTerm (String termName, double point) {
+		super (termName);
+		this.type="singleton";
+		this.max = point;
+		this.min = point;
+		this.point = point;
+	}
 
 	@Override
 	public double fun(double val) {
