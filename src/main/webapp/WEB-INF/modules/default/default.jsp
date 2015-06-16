@@ -575,8 +575,8 @@ var options = {
 		var self = this;
 		self.getVariables ();
 	}
-	VarChartWindow.prototype.reload = function () {
-		//alert ('reloading window');
+	VarChartWindow.prototype.onVariableChange = function () {
+		this.reload();
 	}
 	VarChartWindow.prototype.getVariables = function () {
 		var self = this;
@@ -584,44 +584,66 @@ var options = {
 			if (data == 'false') return;
 			data = $.parseJSON (data);
 			self.input = data;
+			self.ivariable = self.input[0];
+			console.log(self.ivariable);
+			if (!self.ivariable) return;
 			self.tab = $("<div class='term-tab' style='display:none'></div>")
 			self.wnd.resizable.prepend (self.tab);
 			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
+			self.tab.append('<span><select class="var-tab-select"></select></span>');
+			self.select = self.tab.find(".var-tab-select").first();
 			$.each (self.input, function (key, variable) {
-				self.tab.append("<span><input type='checkbox' " + (self.variable == variable? 'checked': '' )+ " name='" + variable + "' />" + variable + "<br /></span>");				
+				var selected = self.ivariable == variable? ' selected ': '' 
+				self.select.append("<option " + selected + " value='" + variable + "'>" + variable + "</option>");				
 			});
 			self.tab.append ("<span><button class='set-input-vars set-input-vars-show'>Show</button><button class='set-input-vars set-input-vars-cancel'>Cancel</button></span>");
 			self.addTabListeners ();
 			self.wnd.navigation.prepend("<div class='mng-button zoom-chart'></div><div class='mng-button show-input-vars-tab'>&#xe800</div>");
-			self.wnd.navigation.find('.').first().click (function () {
+			self.wnd.navigation.find('.show-input-vars-tab').first().click (function () {
 				self.tab.show('fast');
 			});
 			self.wnd.navigation.find('.zoom-chart').first().click (function () {
 				self.zoom();
 			});
+			self.wnd.content.css ("height",150);
+			self.wnd.resizable.resize(function(){
+				self.resize();
+			});
 			self.reload();
 		});
 	}
-	VarChartWindow.zoom = function () {
+	VarChartWindow.prototype.resize = function () {
+		var self = this;
+		if (self.resizeMark) return;
+		window.setTimeout (function () {
+			self.resizeMark = false;
+			self.wnd.content.css ("height",self.wnd.resizable.css("height"));
+			if (self.data.error == "") $.plot(self.wnd.content, self.data.vars, options);
+		},30);
+		self.resizeMark = true;
+	}
+	VarChartWindow.prototype.zoom = function () {
 		//TODO
 	}
 	VarChartWindow.prototype.addTabListeners = function () {
-		//TODO
-	}	
-	VarChartWindow.prototype.reload = function () {
 		var self = this;
-		if (!self.ivariable || !self.input ) {
-			self.ivariable = self.input[0];
-		}
-		else {
-			return;
-		}
-		$.post ('App?action=getVarFunction', {fb:self.fb, ovar:self.variable, ivar:self.ivariable}, function (data) {
+		self.tab.find ('.set-input-vars-show').first().click (function () {
+			self.ivariable = self.select.find(":selected").val();
+			self.tab.hide('fast');
+			self.reload();
+		});
+		self.tab.find ('.set-input-vars-cancel').first().click(function () {
+			slef.tab.hide('fast');
+		});
+	}	
+	
+	VarChartWindow.prototype.reload = function () {
+		var self = this
+		$.post ('App?action=getVariableFunction', {fb:self.fb, ovar:self.variable, ivar:self.ivariable}, function (data) {
 			if (data == 'false') return;
-			data = $.parseJSON (data);
-			alert (data);
-			//TODO 
-		}
+			self.data = $.parseJSON (data);
+			$.plot(self.wnd.content, self.data.vars, options);
+		});
 	}
 	var ChartWindow = function (wnd, variable,fb) {
 		this.variable = variable

@@ -18,7 +18,7 @@ public class VarPointsDto {
 		for (double val = min; val <= max; val+=step) {
 			ivar.setValue(val);
 			data[i][0] = val;
-			data[i][1] = ovar.getValue();
+			data[i++][1] = ovar.getValue();
 		}
 	}
 

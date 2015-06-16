@@ -99,13 +99,14 @@ public class Variables {
 			String ovarName = request.getParameter("ovar"); //output / inline variable
 			String fbName = request.getParameter("fb"); //output / inline variable
 			FunctionBlock fb = app.getFunctionBlock(fbName);
+			if (fb == null) return "{\"error\":\"no fb " + fbName + " found\"}";
 			OutputVariable ovar = (OutputVariable)fb.getRightVariable(ovarName);
 			InputVariable ivar = (InputVariable)fb.getLeftVariable(ivarName);
 			return new VarPointsMapper ().map(app.getEnv(),ovar,ivar,resolution);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			return "false";	
+			return "{\"error\":\"" + e.getMessage() + "\"}";
 		}
 	}
 	public static String getVariables (HttpServletRequest request,
