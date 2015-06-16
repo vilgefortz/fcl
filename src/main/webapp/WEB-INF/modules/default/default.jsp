@@ -302,7 +302,6 @@ var options = {
 				v.updateHtml ();
 			};
 		});
-		Variables.fireChange();
 		self.clearUnused();
 	};
 	VariableWindow.prototype.clearUnused = function () {
@@ -340,7 +339,7 @@ var options = {
 		this.lock = false // lock this value changes when sliding
 		this.hasChanged = true;
 		this.lockReload = false; //this value is setup true to notify that there is change about to be done
-		this.lockReloadDelay = 100;
+		this.lockReloadDelay = 200;
 	}
 	
 	Variable.prototype.updateValue = function (value) {
@@ -373,7 +372,7 @@ var options = {
 			}
 		});
 		}, self.lockReloadDelay);
-		
+		Variables.fireChange();
 	}
 	Variable.prototype.updateHtml = function () {
 		var self = this;
@@ -576,13 +575,11 @@ var options = {
 		self.getVariables ();
 	}
 	VarChartWindow.prototype.onVariableChange = function () {
-		if (this.varReloadMark) return;
-		this.varReloadMark=true;
 		var self = this;
-		window.setTimeout (function () {
-			self.varReloadMark=false;
+		if (self._lastTimeout) window.clearTimeout (self._lastTimeout);
+		self._lastTimeout = window.setTimeout (function () {
 			self.reload();
-		},200);
+		},300);
 	}
 	VarChartWindow.prototype.getVariables = function () {
 		var self = this;
@@ -669,6 +666,7 @@ var options = {
 			if (data == 'false') return;
 			data = $.parseJSON (data);
 			$.each(data, function (key, term) {
+				if (term !== null)
 				self.terms.push (term.name);
 			});
 			self.enabledTerms = self.terms;
@@ -676,7 +674,7 @@ var options = {
 			self.wnd.resizable.prepend (self.tab);
 			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
 			$.each (self.terms, function (key, term) {
-				var checked = self.enabledTerms.indexOf(term)>=0 ? "checked=''" : "";
+				var checked = self.enabledTerms.indexOf(term)>=0 ? "chec 	ked=''" : "";
 				self.tab.append("<span><input type='checkbox' " + checked + " name='" + term + "' />" + term + "<br /></span>");				
 			});
 			self.tab.append ("<span><button class='set-terms set-terms-show'>Show</button><button class='set-terms set-terms-cancel'>Cancel</button></span>");
@@ -759,13 +757,10 @@ var options = {
 	};
 	ChartWindow.prototype.onVariableChange = function () {
 		var self = this;
-		if (self.resizeMark) return;
-		window.setTimeout (function (		) {
-			self.resizeMark = false;
-			self.wnd.content.css ("height",self.wnd.resizable.css("height"));
-			if (self.data.error == "") $.plot(self.wnd.content, self.data.terms, options);
-		},200);
-		self.resizeMark = true;
+		if (self._lastTimeout) window.clearTimeout (self._lastTimeout);
+		self._lastTimeout = window.setTimeout (function (		) {
+			self.reload();
+		},300);
 	}
 	
 	ChartWindow.prototype.reload = function () {
