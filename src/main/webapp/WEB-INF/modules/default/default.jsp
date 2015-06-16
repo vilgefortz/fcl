@@ -17,8 +17,14 @@
 	cursor:hand;
 	cursor:pointer;
 }
+.zoom-content {
+	width:100%;
+	height:475px;
+}
 .zoomed {
-
+ z-index : 200;
+ border-style: ridge;
+ border-width: 5px;
  width:500px;
  height:500px;
  margin:0 auto;
@@ -28,7 +34,6 @@
  top:50%;
  margin-left:-250px;
  margin-top:-250px;
- z-index:10;
 }
 	
 
@@ -164,7 +169,7 @@ var options = {
 	var Variables = {
 		registeredListeners : [],
 		removeListener : function (fun) {
-			if (fun._indexVar >= 0) this.registeredListeners.splice (fun._indexVar,1);	
+			if (fun._indexVar >= 0) this.registeredListeners [fun._indexVar] = null	;	
 		},
 		registerListener : function (fun) {
 			var index = this.registeredListeners.push(fun) - 1 ;
@@ -172,7 +177,7 @@ var options = {
 		},
 		fireChange : function () {
 			$.each (this.registeredListeners, function (key, obj) {
-				if (obj.onVariableChange) obj.onVariableChange();
+				if (obj && obj.onVariableChange) obj.onVariableChange();
 			});
 		},	
 	}
@@ -184,7 +189,7 @@ var options = {
 			if (editor.registeredListeners.length > 0) 
 				if (autorefresh)
 					$.each (editor.registeredListeners, function (key, obj) {
-						obj.refresh();
+						if (obj!=null && obj.refresh) obj.refresh();
 					});
 			getErrors (null);
 		});
@@ -234,7 +239,7 @@ var options = {
 		editor = ace.edit("editor");
 		editor.setTheme("ace/theme/monokai");
 		editor.getSession().on('change', function() {
-			if (editor.timeoutId) window.Timeout(editor.timeoutId);
+			if (editor.timeoutId) window.clearTimeout(editor.timeoutId);
 			editor.timeoutId = window.setTimeout( function () { reloadEditor(); } , 2000);
 		});
 		$("#resizable").resizable	({
@@ -244,7 +249,7 @@ var options = {
 		});
 		editor.registeredListeners = [];
 		editor.removeListener = function (fun) {
-			if (fun._index >= 0) this.registeredListeners.splice (fun._index,1);	
+			if (fun._index >= 0) this.registeredListeners[_index] = null;	
 		}
 		editor.registerListener = function (fun) {
 			var index = this.registeredListeners.push(fun) - 1;
@@ -497,6 +502,35 @@ var options = {
 		}, 200);
 		$("document").off('mouseup');
 	}
+	var addVarChartWindow = function (fb,variable) {
+		windowsManager.add (new Window ({
+				editor : editor,
+				close:true,	
+				closeIcon:'&#xe804;',
+				closing : function (wnd) {
+					Variables.removeListener (this.chartWindow);
+				},
+				toggle:true,
+				toggleUpIcon:'&#xe801;',
+				toggleDownIcon:'&#xe800;',
+				moveable:true,
+				moveUpIcon:'&#xe803;',
+				moveDownIcon:'&#xe802;',
+				resizable:true,
+				title:'Variable f() : ' + variable,
+				refresh : function () {
+					this.chartWindow.reload ();
+				},
+				init : function (wnd) {
+					this.wnd=wnd;
+					var chartWindow = new VarChartWindow (wnd,variable,fb);
+					this.chartWindow = chartWindow;
+					Variables.registerListener (this.chartWindow);
+					wnd.content.css('margin','0px 10px, 0px, 10px');
+					editor.registerListener (this);
+				}
+			}));
+		};
 	
 	var addChartWindow = function (fb,variable) {
 			windowsManager.add (new Window ({
@@ -528,6 +562,67 @@ var options = {
 				}
 			}));
 		};
+	VarChartWindow = function (wnd, variable, fb) {
+		this.variable = variable
+		this.fb=fb;
+		var self = this;
+		this.wnd = wnd;		
+		this.terms = Array ();
+		this.resizeMark = false;
+		this.reloadAll();
+	}
+	VarChartWindow.prototype.reloadAll = function () {
+		var self = this;
+		self.getVariables ();
+	}
+	VarChartWindow.prototype.reload = function () {
+		//alert ('reloading window');
+	}
+	VarChartWindow.prototype.getVariables = function () {
+		var self = this;
+		$.post ('App?action=getVariables', {type:'input',fb:self.fb}, function (data) {
+			if (data == 'false') return;
+			data = $.parseJSON (data);
+			self.input = data;
+			self.tab = $("<div class='term-tab' style='display:none'></div>")
+			self.wnd.resizable.prepend (self.tab);
+			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
+			$.each (self.input, function (key, variable) {
+				self.tab.append("<span><input type='checkbox' " + (self.variable == variable? 'checked': '' )+ " name='" + variable + "' />" + variable + "<br /></span>");				
+			});
+			self.tab.append ("<span><button class='set-input-vars set-input-vars-show'>Show</button><button class='set-input-vars set-input-vars-cancel'>Cancel</button></span>");
+			self.addTabListeners ();
+			self.wnd.navigation.prepend("<div class='mng-button zoom-chart'></div><div class='mng-button show-input-vars-tab'>&#xe800</div>");
+			self.wnd.navigation.find('.').first().click (function () {
+				self.tab.show('fast');
+			});
+			self.wnd.navigation.find('.zoom-chart').first().click (function () {
+				self.zoom();
+			});
+			self.reload();
+		});
+	}
+	VarChartWindow.zoom = function () {
+		//TODO
+	}
+	VarChartWindow.prototype.addTabListeners = function () {
+		//TODO
+	}	
+	VarChartWindow.prototype.reload = function () {
+		var self = this;
+		if (!self.ivariable || !self.input ) {
+			self.ivariable = self.input[0];
+		}
+		else {
+			return;
+		}
+		$.post ('App?action=getVarFunction', {fb:self.fb, ovar:self.variable, ivar:self.ivariable}, function (data) {
+			if (data == 'false') return;
+			data = $.parseJSON (data);
+			alert (data);
+			//TODO 
+		}
+	}
 	var ChartWindow = function (wnd, variable,fb) {
 		this.variable = variable
 		this.fb=fb;
@@ -537,6 +632,7 @@ var options = {
 		this.resizeMark = false;
 		this.reloadAll();
 	};
+	
 	ChartWindow.prototype.reloadAll = function () {
 		
 		var self = this;
@@ -558,7 +654,7 @@ var options = {
 			self.tab.append ("<span><button class='set-terms set-terms-show'>Show</button><button class='set-terms set-terms-cancel'>Cancel</button></span>");
 	
 			self.addTabListeners ();
-			self.wnd.navigation.prepend("<div class='mng-button zoom-chart'>&#xe800</div><div class='mng-button show-terms'>&#xe800</div>");
+			self.wnd.navigation.prepend("<div class='mng-button zoom-chart'></div><div class='mng-button show-terms'>&#xe800</div>");
 			self.wnd.navigation.find('.show-terms').first().click (function () {
 				self.tab.show('fast');
 			});
@@ -582,8 +678,11 @@ var options = {
 		body.prepend ("<div class='zoomed'><div class='window-header'><div class='window-title'>"+ 
 		self.variable + "</div><div class='window-management'><div class='mng-close mng-button'></div></div><div class='zoom-content'></div></div></div>");
 		var zoomed = body.find (".zoomed").first();
-		var close = zommed.find(".mng-close").first();
-		var content = zommed.find(".zoom-content").first();
+		var close = zoomed.find(".mng-close").first();
+		close.click (function () {
+			zoomed.remove();
+		});
+		var content = zoomed.find(".zoom-content").first();
 		if (self.data.error == "") $.plot(content, self.data.terms, options);
 	}
 
@@ -697,9 +796,35 @@ var options = {
 						},
 						items : [
 							{ 
-								label : "<a class='show-chart-item' onclick='return false;'>Show chart</a>",
+								label : "<a class='show-chart-item' onclick='return false;'>Show term chart</a>",
 								click : function (params) { 
 									addChartWindow (params.fb, params.varname);
+								}
+							}
+						]
+					};
+					var cm = new ContextMenu (options,element);
+					cm.open();
+				},
+				showOutputVariableContextMenu : function (fb,varname,element) {
+					var options = {
+						title : varname + " menu :",
+						params : {
+							fb : fb,
+							varname : varname,
+							element : element,
+						},
+						items : [
+							{ 
+								label : "<a class='show-chart-item' onclick='return false;'>Show term chart</a>",
+								click : function (params) { 
+									addChartWindow (params.fb, params.varname);
+								}
+							},
+							{ 
+								label : "<a class='show-chart-item' onclick='return false;'>Show variable chart</a>",
+								click : function (params) { 
+									addVarChartWindow (params.fb, params.varname);
 								}
 							}
 						]
@@ -718,8 +843,11 @@ var options = {
 							var id = selected.node.id;
 							var anchorId= id + "_anchor";
 							var nodeElement = $("#" + anchorId);
-							if (nodeElement.hasClass('var-node')) {
+							if (nodeElement.hasClass('input-var')) {
 								self.showVariableContextMenu (nodeElement.attr('data-function_block'),nodeElement.attr('name'),nodeElement);
+							}
+							if (nodeElement.hasClass('output-var') || nodeElement.hasClass('inline-var'))	 {
+								self.showOutputVariableContextMenu (nodeElement.attr('data-function_block'),nodeElement.attr('name'),nodeElement);
 							}
 						});
 						tree.bind("loaded.jstree", function (event, data) {

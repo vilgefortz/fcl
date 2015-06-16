@@ -58,13 +58,16 @@ public class App extends HttpServlet {
 			return;
 		}
 		Map<String,ApplicationResponseAction> dispatchMap = new HashMap<String,ApplicationResponseAction> ();
+		
 		dispatchMap.put ("setVariable", Variables::setVariable);
 		dispatchMap.put ("getErrorLog", LoggerEndpoint::getErrorLog);
 		dispatchMap.put ("getEnviroment", Variables::getEnviroment);
 		dispatchMap.put ("getTreeData", Tree::getTreeData);
 		dispatchMap.put ("getTermsData", TermEndpoint::getTerms);
+		dispatchMap.put ("getVariables", Variables::getVariables);
 		dispatchMap.put ("remove-var", Variables::removeVariable);
 		dispatchMap.put ("getTerms", Variables::getTerms);
+		dispatchMap.put ("getVariableFunction", Variables::getVariableFunction);
 		ApplicationResponseAction action = dispatchMap.get(actionString);
 		if (action != null) pw.write(action.action(request, response, app));
 		else pw.write("404");
