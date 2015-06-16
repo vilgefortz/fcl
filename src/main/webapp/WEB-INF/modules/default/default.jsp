@@ -576,7 +576,13 @@ var options = {
 		self.getVariables ();
 	}
 	VarChartWindow.prototype.onVariableChange = function () {
-		this.reload();
+		if (this.varReloadMark) return;
+		this.varReloadMark=true;
+		var self = this;
+		window.setTimeout (function () {
+			self.varReloadMark=false;
+			self.reload();
+		},200);
 	}
 	VarChartWindow.prototype.getVariables = function () {
 		var self = this;
@@ -615,7 +621,7 @@ var options = {
 	VarChartWindow.prototype.resize = function () {
 		var self = this;
 		if (self.resizeMark) return;
-		window.setTimeout (function () {
+		window.setTimeout (function (		) {
 			self.resizeMark = false;
 			self.wnd.content.css ("height",self.wnd.resizable.css("height"));
 			if (self.data.error == "") $.plot(self.wnd.content, self.data.vars, options);
@@ -753,14 +759,13 @@ var options = {
 	};
 	ChartWindow.prototype.onVariableChange = function () {
 		var self = this;
-			$.post (this.generateUrl (this.fb,this.variable,this.enabledTerms), null, function (data) {
-			self.data = $.parseJSON(data);
-			if (self.data.error != "") {
-				self.wnd.content.html(self.data.error);
-			} else 
-			self.wnd.content.empty(); //html('');
-			$.plot(self.wnd.content, self.data.terms, options);
-		});
+		if (self.resizeMark) return;
+		window.setTimeout (function (		) {
+			self.resizeMark = false;
+			self.wnd.content.css ("height",self.wnd.resizable.css("height"));
+			if (self.data.error == "") $.plot(self.wnd.content, self.data.terms, options);
+		},200);
+		self.resizeMark = true;
 	}
 	
 	ChartWindow.prototype.reload = function () {
