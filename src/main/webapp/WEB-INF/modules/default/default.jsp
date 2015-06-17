@@ -339,7 +339,7 @@ var options = {
 		this.lock = false // lock this value changes when sliding
 		this.hasChanged = true;
 		this.lockReload = false; //this value is setup true to notify that there is change about to be done
-		this.lockReloadDelay = 400;
+		this.lockReloadDelay = 200;
 	}
 	
 	Variable.prototype.updateValue = function (value) {

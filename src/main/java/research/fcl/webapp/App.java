@@ -51,8 +51,9 @@ public class App extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		String actionString = request.getParameter("action");
-		PrintWriter pw = response.getWriter(); 
+		PrintWriter pw = response.getWriter();
 		Application app = (Application) session.getAttribute("app");
+		synchronized (app) {
 		if (app==null) {
 			pw.print("false");
 			return;
@@ -71,7 +72,7 @@ public class App extends HttpServlet {
 		ApplicationResponseAction action = dispatchMap.get(actionString);
 		if (action != null) pw.write(action.action(request, response, app));
 		else pw.write("404");
-		
+		}
 	}
 
 }
