@@ -45,6 +45,7 @@ public class TermEndpoint {
 				return createErrorJson ("Term names not provided");
 			}
 			for (String name : termNames) {
+				System.out.println ("RETRIEVING TERM IN ENDPOINT : '" + name + "'");
 				terms.add(variable.getTermFromAll(name));
 			}
 			return new DefaultGsonMapper (new TermPointsDto(variable, terms,res)).toJson();

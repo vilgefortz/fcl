@@ -65,4 +65,7 @@ public abstract class Term {
 			}
 		};
 	}
+	public String getType() {
+		return type;
+	}
 }

@@ -14,7 +14,7 @@ public class DefaultGsonMapper {
 
 	public String toJson() throws FileNotFoundException {
 		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-				.setPrettyPrinting().create();
+				.create();
 		return gson.toJson(obj);
 
 	}

@@ -96,6 +96,7 @@ public class OutputVariable extends BaseFunctionVariable  {
 	}
 	public List<Term> getAllTerms () {
 		List<Term> allTerms = super.getAllTerms();
+		System.out.println ("RETRIEVING ACCUMULATION TERM :" + this.getAccumulationTerm());
 		allTerms.add (this.getAccumulationTerm());
 		//allTerms.addAll (this.getAccumulationTerms());
 		//allTerms.forEach ( e -> { l.info ("Created list for output variable " + this.getName() + " added term " + e.getName()); });

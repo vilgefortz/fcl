@@ -84,6 +84,7 @@ public class Variables {
 			FunctionBlock fb = app.getFunctionBlock(fbName);
 			BaseFunctionVariable variable = fb.getVariable(varName);
 			List<Term> termsList = variable.getAllTerms();
+			termsList.forEach (e -> System.out.println ("RETRIEVED TERM FOR '" + varName + "' : '" + e.getName() + "'"));
 			DefaultGsonMapper mapper = new DefaultGsonMapper(termsList);
 			return mapper.toJson();
 		} catch (Exception e) {
@@ -93,7 +94,7 @@ public class Variables {
 	}
 	
 	public static String getVariableFunction (HttpServletRequest request,
-			HttpServletResponse response, Application app) {
+			HttpServletResponse response, Application app) {		
 		try {
 			String ivarName = request.getParameter("ivar"); //input variable
 			String ovarName = request.getParameter("ovar"); //output / inline variable
