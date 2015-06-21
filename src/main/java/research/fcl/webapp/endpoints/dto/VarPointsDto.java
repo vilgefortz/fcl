@@ -13,12 +13,13 @@ public class VarPointsDto {
 		double max = Math.max(ivar.getMax(), ivar.getValue());
 		double step = (max-min)/resolution;
 		label = ovar.getName() + " (" + ivar.getName() + ")";
-		int i = 0;
 		this.data = new double [(int) ((max - min)/step)][2];
-		for (double val = min; val <= max; val+=step) {
-			ivar.setValue(val);
+		double val = min;
+		for (int i=0; i<this.data.length; i++) {
+			ivar.setValue(val); 
 			data[i][0] = val;
-			data[i++][1] = ovar.getValue();
+			data[i][1] = ovar.getValue();
+			val+=step;
 		}
 	}
 

@@ -69,6 +69,7 @@ public class App extends HttpServlet {
 		dispatchMap.put ("remove-var", Variables::removeVariable);
 		dispatchMap.put ("getTerms", Variables::getTerms);
 		dispatchMap.put ("getVariableFunction", Variables::getVariableFunction);
+		dispatchMap.put ("getVariable3DFunction", Variables::getVariable3DFunction);
 		ApplicationResponseAction action = dispatchMap.get(actionString);
 		if (action != null) pw.write(action.action(request, response, app));
 		else pw.write("404");

@@ -18,6 +18,7 @@
   padding: 0 4px 0 1px;
   margin: 0;
   vertical-align: top;
+  font-size: 11px;
 }
 .jstree-anchor:focus {
   outline: 0;
@@ -366,29 +367,29 @@
 }
 .jstree-default .jstree-node {
   min-height: 24px;
-  line-height: 24px;
-  margin-left: 24px;
-  min-width: 24px;
+  line-height: 18px;
+  margin-left: 18px;
+  min-width: 18px;
 }
 .jstree-default .jstree-anchor {
-  line-height: 24px;
-  height: 24px;
+  line-height: 18px;
+  height: 18px;
 }
 .jstree-default .jstree-icon {
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
 }
 .jstree-default .jstree-icon:empty {
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
 }
 .jstree-default.jstree-rtl .jstree-node {
-  margin-right: 24px;
+  margin-right: 18px;
 }
 .jstree-default .jstree-wholerow {
-  height: 24px;
+  height: 18px;
 }
 .jstree-default .jstree-node,
 .jstree-default .jstree-icon {
@@ -501,7 +502,7 @@
   margin-right: 0;
 }
 #jstree-dnd.jstree-default {
-  line-height: 24px;
+  line-height: 18px;
   padding: 0 4px;
 }
 #jstree-dnd.jstree-default .jstree-ok,
@@ -512,9 +513,9 @@
 }
 #jstree-dnd.jstree-default i {
   background: transparent;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
 }
 #jstree-dnd.jstree-default .jstree-ok {
   background-position: -4px -68px;
@@ -768,11 +769,11 @@
 }
 .jstree-default-large.jstree-checkbox-selection .jstree-clicked > .jstree-checkbox,
 .jstree-default-large .jstree-checked > .jstree-checkbox {
-  background-position: -224px 0px;
+  background-position: -218px 0px;
 }
 .jstree-default-large.jstree-checkbox-selection .jstree-clicked > .jstree-checkbox:hover,
 .jstree-default-large .jstree-checked > .jstree-checkbox:hover {
-  background-position: -224px -32px;
+  background-position: -218px -32px;
 }
 .jstree-default-large .jstree-anchor > .jstree-undetermined {
   background-position: -192px 0px;
@@ -871,12 +872,12 @@
   #jstree-dnd.jstree-dnd-responsive > .jstree-ok {
     background-image: url("40px.png");
     background-position: 0 -200px;
-    background-size: 120px 240px;
+    background-size: 120px 180px;
   }
   #jstree-dnd.jstree-dnd-responsive > .jstree-er {
     background-image: url("40px.png");
     background-position: -40px -200px;
-    background-size: 120px 240px;
+    background-size: 120px 180px;
   }
   #jstree-marker.jstree-dnd-responsive {
     border-left-width: 10px;
@@ -929,7 +930,7 @@
   .jstree-default-responsive .jstree-ocl,
   .jstree-default-responsive .jstree-themeicon,
   .jstree-default-responsive .jstree-checkbox {
-    background-size: 120px 240px;
+    background-size: 120px 180px;
   }
   .jstree-default-responsive .jstree-leaf > .jstree-ocl {
     background: transparent;
@@ -996,7 +997,7 @@
   .jstree-default-responsive .jstree-themeicon,
   .jstree-default-responsive .jstree-checkbox {
     background-image: url("40px.png");
-    background-size: 120px 240px;
+    background-size: 120px 180px;
   }
   .jstree-default-responsive .jstree-node {
     background-position: -80px 0;
@@ -1018,11 +1019,11 @@
   }
   .jstree-default-responsive .jstree-file {
     background: url("40px.png") 0 -160px no-repeat;
-    background-size: 120px 240px;
+    background-size: 120px 180px;
   }
   .jstree-default-responsive .jstree-folder {
     background: url("40px.png") -40px -40px no-repeat;
-    background-size: 120px 240px;
+    background-size: 120px 180px;
   }
   .jstree-default-responsive > .jstree-container-ul > .jstree-node {
     margin-left: 0;

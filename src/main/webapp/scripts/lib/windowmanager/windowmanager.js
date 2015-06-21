@@ -7,6 +7,10 @@ var Window = function (setup) {
 		this.manager.close (this);
 		if (this.setup.closing) this.setup.closing(this);
 	}
+	Window.prototype.setId = function (id) {
+		this.element.attr ('id','window-' + this.manager.name + "-num-" + id);
+		this.element.attr ('data-index', id);
+	}
 	Window.prototype.toggle = function () {
 		if (this.toggleState = !this.toggleState) {
 			this.resizable.show('slow');
@@ -90,6 +94,8 @@ var Window = function (setup) {
 			if (pos == 0) return;
 			this.windows[pos] = this.windows [pos-1];
 			this.windows[pos-1] = window;
+			this.windows[pos].setId(pos);
+			this.windows[pos-1].setId(pos-1);
 			this.windows[pos].index=pos;
 			this.windows[pos-1].index=pos-1;
 			this.swap (window.element[0], window.element.prev()[0]);
@@ -102,11 +108,17 @@ var Window = function (setup) {
 			this.windows[pos+1] = window;
 			this.windows[pos].index=pos;
 			this.windows[pos+1].index=pos+1;
+			this.windows[pos].setId(pos);
+			this.windows[pos+1].setId(pos+1);
 			this.swap (window.element[0], window.element.next()[0]);
 		}
         
         WindowsManager.prototype.close = function (window) {
-                this.windows.splice (window.index,1);
+                for (var i=window.index; i<this.windows.length; i++) {
+					this.windows[i].index -= 1;
+					this.windows[i].setId (i-1);
+				}
+				this.windows.splice (window.index,1);
 				window.element.remove();
         }
         WindowsManager.prototype.refresh = function () {

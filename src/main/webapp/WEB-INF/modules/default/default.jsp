@@ -2,16 +2,18 @@
 	pageEncoding="UTF-8"%>
 	<link rel="stylesheet" href="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.css">
 	<link rel="stylesheet" href="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.theme.css">
-	<link rel="stylesheet" href="scripts/lib/dist/themes/default/style.min.css" />
+	<link rel="stylesheet" href="scripts/lib/dist/themes/default/style.css" />
 	<script src="scripts/lib/dist/jstree.min.js"></script>
 	<script src="scripts/lib/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
 	<script src="scripts/lib/ace/src-noconflict/ace.js"	type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" href="css/windowmanager/fontello.css" />
 	<link rel="stylesheet" href="css/windowmanager/windowsmanager.css" />
-	<script src="scripts/lib	/windowmanager/windowmanager.js" type="text/javascript"></script>
-	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.js"></script>
-	<script language="javascript" type="text/javascript" src="sc 	ripts/lib/flot/jquery.flot.resize.js"></script>
-	
+	<script src="scripts/lib/windowmanager/windowmanager.js" type="text/javascript"></script>
+	<script language="javascript" type="text/javascript" src="scripts/lib/flot/jquery.flot.js"></script>	
+	<script type="text/javascript" src="scripts/lib/3dcharts/three.js/three.min.js"></script>
+	<script type="text/javascript" src="scripts/lib/3dcharts/d3/d3.js"></script>
+	<script type="text/javascript" src="scripts/lib/3dcharts/elegans/elegans.js"></script>
+
 <style>
 .context-menu-item:hover {
 	cursor:hand;
@@ -22,21 +24,20 @@
 	height:475px;
 }
 .zoomed {
- z-index : 200;
- border-style: ridge;
- border-width: 5px;
- width:500px;
- height:500px;
- margin:0 auto;
- background:#f7f7f7;
- position:absolute;
- left:50%;
- top:50%;
- margin-left:-250px;
- margin-top:-250px;
+	z-index : 200;
+	border-style: ridge;
+	border-width: 5px;
+	width:700px;
+	height:500px;
+	margin:0 auto;
+	background:#f7f7f7;
+	position:absolute;
+	left:50%;
+	top:50%;
+	margin-left:-350px;
+	margin-top:-250px;
 }
 	
-
 .context-menu {
 	margin-left:40px;
 	position: absolute;
@@ -70,10 +71,13 @@
 .show-terms {
 	background-color:red;
 }
+.show-input-vars-tab {
+	background-color:red;
+}
 #resizable {
 	width: 100%;
-	height: 500px;
-	max-width: 100%;
+	height: 600px;
+	max-width:100%;
 	min-width: 100%;
 	border: 3px solid black
 }
@@ -129,12 +133,19 @@ input {
 	margin-left:3%;
 	width:57%;
 }
+#vis{
+	position:relative;
+	width:100%;
+	height:600px
+}
+
 </style>
 <div class="row">
 	<div class="col-md-8 editor">
 		<div id="toolbox" class="toolbox">
 			<button class='treeWindowButton'>TREE</button>
 			<button class='varWindowButton'>VARIABLES</button>
+			<button class='ThreeDWindowButton'>3D</button>
 			<span><input type='checkbox' id='autorefresh' checked />Autorefresh</span>
 		</div>
 		<div id="resizable">
@@ -142,15 +153,12 @@ input {
 			<div id="editor">
 				<jsp:include page='example.fcl' />
 			</div>
-
 		</div>
 	</div>
 	<div id="sidebar" class="col-md-4 sidebar">
 		<div id="window-rail"></div>
 	</div>
 </div>
-
-
 <script>
 //default chart options
 var options = {
@@ -626,7 +634,17 @@ var options = {
 		self.resizeMark = true;
 	}
 	VarChartWindow.prototype.zoom = function () {
-		//TODO
+		var self = this;
+		var body = $("body");
+		body.prepend ("<div class='zoomed'><div class='window-header'><div class='window-title'>"+ 
+		self.variable + " (" + self.ivariable + ")"+ "</div><div class='window-management'><div class='mng-close mng-button'></div></div><div class='zoom-content'></div></div></div>");
+		var zoomed = body.find (".zoomed").first();
+		var close = zoomed.find(".mng-close").first();
+		close.click (function () {
+			zoomed.remove();
+		});
+		var content = zoomed.find(".zoom-content").first();
+		if (self.data.error == "") $.plot(content, self.data.vars, options);
 	}
 	VarChartWindow.prototype.addTabListeners = function () {
 		var self = this;
@@ -674,7 +692,7 @@ var options = {
 			self.wnd.resizable.prepend (self.tab);
 			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
 			$.each (self.terms, function (key, term) {
-				var checked = self.enabledTerms.indexOf(term)>=0 ? "chec 	ked=''" : "";
+				var checked = self.enabledTerms.indexOf(term)>=0 ? "checked=''" : "";
 				self.tab.append("<span><input type='checkbox' " + checked + " name='" + term + "' />" + term + "<br /></span>");				
 			});
 			self.tab.append ("<span><button class='set-terms set-terms-show'>Show</button><button class='set-terms set-terms-cancel'>Cancel</button></span>");
@@ -702,7 +720,7 @@ var options = {
 		var self = this;
 		var body = $("body");
 		body.prepend ("<div class='zoomed'><div class='window-header'><div class='window-title'>"+ 
-		self.variable + "</div><div class='window-management'><div class='mng-close mng-button'></div></div><div class='zoom-content'></div></div></div>");
+		"Variable : " + self.variable + "</div><div class='window-management'><div class='mng-close mng-button'></div></div><div class='zoom-content'></div></div></div>");
 		var zoomed = body.find (".zoomed").first();
 		var close = zoomed.find(".mng-close").first();
 		close.click (function () {
@@ -860,7 +878,8 @@ var options = {
 					wnd=this.wnd;
 					$.post("App?action=getTreeData", null, function(data) {
 						var tree = wnd.content;
-						//tree.jstree("destroy");
+						var treeData = $.parseJSON(data);		
+						tree.jstree("destroy");
 						tree.bind ('select_node.jstree', function (node,selected) {
 							var id = selected.node.id;
 							var anchorId= id + "_anchor";
@@ -876,11 +895,11 @@ var options = {
 							tree.jstree("open_all");
 							tree.jstree().redraw(true);
 						});
-						var treeData = $.parseJSON(data);		
 						tree.jstree( { 
 							'core' : {
 								'data' : treeData
-							} 
+							},
+							'themes' : [ 'core', 'ui', 'themes' ]
 						});
 					});	
 				},	
@@ -899,4 +918,90 @@ var options = {
     var windowsManager = new WindowsManager (windowContainer);
        
 </script>
+
+	<!-- EXAMPLE -->
+	<script type="text/javascript">
+	var add3DChartWindow = function (fb,variable) {
+		windowsManager.add (new Window ({
+				editor : editor,
+				close:true,	
+				closeIcon:'&#xe804;',
+				closing : function (wnd) {
+					Variables.removeListener (this.chartWindow);
+				},
+				toggle:true,
+				toggleUpIcon:'&#xe801;',
+				toggleDownIcon:'&#xe800;',
+				moveable:true,
+				moveUpIcon:'&#xe803;',
+				moveDownIcon:'&#xe802;',
+				resizable:true,
+				title:'Variable f() : ' + variable,
+				refresh : function () {
+					this.chartWindow.reload ();
+				},
+				init : function (wnd) {
+					this.wnd=wnd;
+					var chartWindow = new ThreeDWindow (wnd,variable,fb);
+					this.chartWindow = chartWindow;
+					Variables.registerListener (this.chartWindow);
+					wnd.content.css('margin','0px 10px, 0px, 10px');
+					editor.registerListener (this);
+				}
+			}));
+		};
+	$(".ThreeDWindowButton").click ( function () {
+		add3DChartWindow (null, null);
+	});
+	
+	var ThreeDWindow = function (wnd, variable, fb) {
+		this.wnd = wnd;
+		this.variable = variable;
+		this.fb = fb;
+		//debug
+		this.ovar='valve';
+		this.ivar = [];
+		this.ivar[0] = 'temp';
+		this.ivar[1] = 'pressure';
+		this.refresh ();
+		this.res = 30;
+	}
+	ThreeDWindow.prototype.reload = function () {
+		this.wnd.content.empty();
+		this.refresh();
+	}
+	ThreeDWindow.prototype.refresh = function () {
+		var self = this;
+	$.post ('App?action=getVariable3DFunction', {
+			ivar0:self.ivar[0],
+			ivar1:self.ivar[1],
+			ovar:self.ovar,
+			res:self.res,
+			fb:'Fuzzy_FB',
+		}, function (jsondata) {
+			dates = $.parseJSON(jsondata);
+			var vars = {
+			x : dates.vars[0].x,
+			y : dates.vars[0].y,
+			z : dates.vars[0].z,
+		}
+	////render part
+	
+	self.wnd.content.css ('height',400);
+    //d3.select(this.wnd.content[0]).datum(data).call(Elegans.SurfacePlot);
+    var stage = new Elegans.Stage(self.wnd.content[0], {width:200, height:200,axis_labels: {x:self.ivar[0],y:self.ivar[1], z:self.ovar}, });
+    stage.add(new Elegans.Surface( dates.vars[0] , 
+		{
+			has_legend:false,
+			fill_colors:['#0000ff', '#00ff00','#ffff00','#ff0000' ]
+		}
+	));
+    stage.render();
+    //setting sizes
+    var canvas = self.wnd.content.find('canvas').first();
+    canvas.css ( { width : '100%', height : '100%' } );		
+	});
+	}
+
+  </script>
 

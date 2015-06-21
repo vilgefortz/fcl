@@ -92,7 +92,32 @@ public class Variables {
 			return "false";	
 		}
 	}
-	
+	public static String getVariable3DFunction (HttpServletRequest request,
+			HttpServletResponse response, Application app) {
+		try {
+			String ivar0Name = request.getParameter("ivar0"); //input variable 0
+			String ivar1Name = request.getParameter("ivar1"); //input variable 1
+			String ovarName = request.getParameter("ovar"); //output / inline variable
+			String fbName = request.getParameter("fb"); //output / inline variable
+			String resString = request.getParameter("res"); //output / inline variable
+			int res = resolution;
+			try {
+				res = Integer.parseInt(resString);
+			} catch (Exception e) {
+				//nothing, using default
+			}
+			FunctionBlock fb = app.getFunctionBlock(fbName);
+			if (fb == null) return "{\"error\":\"no fb " + fbName + " found\"}";
+			OutputVariable ovar = (OutputVariable)fb.getRightVariable(ovarName);
+			InputVariable ivar0 = (InputVariable)fb.getLeftVariable(ivar0Name);
+			InputVariable ivar1 = (InputVariable)fb.getLeftVariable(ivar1Name);
+			return new VarPoints3DDTO ().map(app.getEnv(),ovar,new InputVariable [] {ivar0, ivar1}, res		);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "{\"error\":\"" + e.getMessage() + "\"}";
+		}
+	}
 	public static String getVariableFunction (HttpServletRequest request,
 			HttpServletResponse response, Application app) {		
 		try {
