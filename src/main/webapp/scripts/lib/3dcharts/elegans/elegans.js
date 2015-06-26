@@ -1904,8 +1904,8 @@ define('components/space',[
 	        var nattr = ticks[0][i].getAttribute("transform");
 	        var valueArr = /translate\(((?:-|\d|.)+),((?:-|\d|.)+)\)/g.exec(nattr);
 	        var tick_center = (new THREE.Vector3).addVectors(axis_start, nv_start2end.clone().multiplyScalar(valueArr[2]));
-	        var tick_start = (new THREE.Vector3).addVectors(tick_center, nv_tick.clone().multiplyScalar(2));
-	        var tick_end = (new THREE.Vector3).addVectors(tick_center, nv_tick.clone().multiplyScalar(-2));
+	        var tick_start = (new THREE.Vector3).addVectors(tick_center, nv_tick.clone().multiplyScalar(0.3));
+	        var tick_end = (new THREE.Vector3).addVectors(tick_center, nv_tick.clone().multiplyScalar(-0.3));
 	        geometry.vertices.push(tick_start);
 	        geometry.vertices.push(tick_end);
 

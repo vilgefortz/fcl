@@ -98,6 +98,7 @@ public class Variables {
 			String ivar0Name = request.getParameter("ivar0"); //input variable 0
 			String ivar1Name = request.getParameter("ivar1"); //input variable 1
 			String ovarName = request.getParameter("ovar"); //output / inline variable
+			System.out.println (ovarName);
 			String fbName = request.getParameter("fb"); //output / inline variable
 			String resString = request.getParameter("res"); //output / inline variable
 			int res = resolution;

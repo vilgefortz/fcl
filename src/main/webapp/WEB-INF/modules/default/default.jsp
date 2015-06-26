@@ -578,6 +578,9 @@ var options = {
 		this.resizeMark = false;
 		this.reloadAll();
 	}
+	VarChartWindow.prototype.refresh = function () {
+		this.reloadAll();
+	}
 	VarChartWindow.prototype.reloadAll = function () {
 		var self = this;
 		self.getVariables ();
@@ -598,6 +601,7 @@ var options = {
 			self.ivariable = self.input[0];
 			console.log(self.ivariable);
 			if (!self.ivariable) return;
+			if (self.tab) self.tab.remove();
 			self.tab = $("<div class='term-tab' style='display:none'></div>")
 			self.wnd.resizable.prepend (self.tab);
 			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
@@ -866,6 +870,12 @@ var options = {
 								click : function (params) { 
 									addVarChartWindow (params.fb, params.varname);
 								}
+							},
+							{
+								label : "<a class='show-chart-item' onclick='return false;'>Show variable 3D chart</a>",
+								click : function (params) { 
+									add3DChartWindow (params.fb, params.varname);
+								}
 							}
 						]
 					};
@@ -959,19 +969,15 @@ var options = {
 		this.variable = variable;
 		this.fb = fb;
 		//debug
-		this.ovar='valve';
+		console.log(variable);
+		this.ovar=variable;
 		this.ivar = [];
-		this.ivar[0] = 'temp';
-		this.ivar[1] = 'pressure';
+		this.res = '35';
 		this.refresh ();
-		this.res = 30;
 	}
+	
 	ThreeDWindow.prototype.reload = function () {
-		this.wnd.content.empty();
-		this.refresh();
-	}
-	ThreeDWindow.prototype.refresh = function () {
-		var self = this;
+				var self = this;
 	$.post ('App?action=getVariable3DFunction', {
 			ivar0:self.ivar[0],
 			ivar1:self.ivar[1],
@@ -986,9 +992,9 @@ var options = {
 			z : dates.vars[0].z,
 		}
 	////render part
-	
+	self.wnd.content.empty();
 	self.wnd.content.css ('height',400);
-    //d3.select(this.wnd.content[0]).datum(data).call(Elegans.SurfacePlot);
+    //d3.select(this.wnd.content[0]).datum(data).call(Elegans.SurfacePlot);	
     var stage = new Elegans.Stage(self.wnd.content[0], {width:200, height:200,axis_labels: {x:self.ivar[0],y:self.ivar[1], z:self.ovar}, });
     stage.add(new Elegans.Surface( dates.vars[0] , 
 		{
@@ -1001,6 +1007,47 @@ var options = {
     var canvas = self.wnd.content.find('canvas').first();
     canvas.css ( { width : '100%', height : '100%' } );		
 	});
+	}
+	ThreeDWindow.onVariableChange = function () {
+		this.refresh ();
+	}
+	ThreeDWindow.prototype.getVariables = function () {
+		var self = this;
+		$.post ('App?action=getVariables', {type:'input',fb:self.fb}, function (data) {
+			if (data == 'false') return;
+			data = $.parseJSON (data);
+			self.input = data;
+			self.ivar[0] = self.input[0];
+			self.ivar[1] = self.input[1];
+			if (!self.ivar[0]) return;
+			if (!self.ivar[1]) return;
+			self.tab = $("<div class='term-tab' style='display:none'></div>")
+			self.wnd.resizable.prepend (self.tab);
+			self.tab.append('<span><h5>Select terms to show on chart</h5></span>');
+			self.tab.append('<span><select class="var-tab-select"></select></span>');
+			self.select = self.tab.find(".var-tab-select").first();
+			$.each (self.input, function (key, variable) {
+				var selected = self.ivariable == variable? ' selected ': '' 
+				self.select.append("<option " + selected + " value='" + variable + "'>" + variable + "</option>");				
+			});
+			self.tab.append ("<span><button class='set-input-vars set-input-vars-show'>Show</button><button class='set-input-vars set-input-vars-cancel'>Cancel</button></span>");
+			//self.addTabListeners ();
+			self.wnd.navigation.prepend("<div class='mng-button zoom-chart'></div><div class='mng-button show-input-vars-tab'>&#xe800</div>");
+			self.wnd.navigation.find('.show-input-vars-tab').first().click (function () {
+				self.tab.show('fast');
+			});
+			self.wnd.navigation.find('.zoom-chart').first().click (function () {
+				self.zoom();
+			});
+			self.wnd.content.css ("height",150);
+			self.wnd.resizable.resize(function(){
+				self.resize();
+			});
+			self.reload();
+		});
+	}
+	ThreeDWindow.prototype.refresh = function () {
+		this.getVariables ();
 	}
 
   </script>
