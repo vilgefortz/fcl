@@ -1,0 +1,30 @@
+Roboczo :
+Wstęp
+
+I. Podstawy teorii modelowania systemĂÂłw rozmytych
+1. ReguĂ‚Âły sterownika rozmytego
+2. Bloki i proces wnioskowania rozmytego
+2.1. Blok rozmywania
+2.2. Blok i metody wnioskowania
+2.3. Blok i metody wyostrzania
+3. PrzykĂ‚Âład wnioskowania rozmytego
+3.1 Modelowanie rozmyte, przykĂ‚Âłady
+//tutaj jakies przykladowe modele (np Mamdaniego, Rozmyte sieci neuronowe)
+II. Opis skĂ‚Âładni jĂÂŞzyka Fuzzy Control Language
+1. IEC 61131-7
+2. Blok funkcji
+3. Blok zmiennych
+4. Blok reguĂ‚Âł
+
+III. SzczegĂÂłĂ‚Âły implementacji sterownika FCL
+1. SzczegĂÂłĂ‚Âły implementacji klas sterownika
+2. SposĂÂłb reprezentacji systemu rozmytego w strukturze klas w Javie
+2.1 Klasa zmiennej, termu i reguly
+2.2 Klasa bloku funkcji
+3. MoĂ‚ÂżliwoĂ…â€ści rozwoju funkcji jĂÂŞzyka.
+3.1 Klasy metod tworzenia termĂÂłw
+3.2 Klasy modyfikatorĂÂłw
+3.3 Klasy operatorĂÂłw, metod defuzyfikacji, koniunkcji, alternatywy i akumulacji
+3.4 Wybrane przykĹ‚ady - np. sterownik SE szklarni, kilkanaĹ›cie reguĹ‚, zmienne lingwistyczne....
+
+IV. Podsumowanie

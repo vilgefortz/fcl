@@ -1,0 +1,35 @@
+2. Bloki i proces wnioskowania rozmytego
+2.1. Blok rozmywania
+
+Bazując cały czas na modelu Mamdaniego wyróżniamy kolejne etapy(bloki) wnioskowania rozmytego. Pierwszym z nich jest blok rozmywania.
+Blok ten przekształca wartość zmiennej wejściowej (zmiennej lingwistycznej) na stopień spełnienia predykatów - przesłanek reguł, które angażują tę zmienną. 
+
+Najczęściej spotykaną i najprostszą obliczeniowo metodą, która realizuje te cele jest metoda typu singleton. Polega ona na utworzeniu funkcji - zbioru rozmytego X następującej postaci :
+(TODO funkcja dla singletona X)
+Następnie jako wartość spełenia predykatu przesłanki A is B uznaje się zbiór powstały w wyniku przecięcia zbioru X ze ze zbiorem skojarzonym z termem B. Jest to prosta metoda w wyniku której zbiorem wynikowym predykatu przesłanki jest liczba mówiąca o stopniu aktywacji tego predykatu. Istnieje wiele innych, bardziej skomplikowanych metod rozmywania, które zostały opisane m. in. w [TODO Łachwa 01] czy [Piegat 97].
+
+2.2. Blok i metody inferencji
+
+Inferencja jest kolejnym etapem działania sterownika rozmytego. Jest ona jednocześnie najbardziej złożona obliczeniowo. Możemy wyróżnić trzy etapy prac tego bloku :
+- agregacja (aggregation)
+- wnioskowanie
+- kumulacja (accumulation)
+Wszystkie te etapy wykonywane są w oparciu o przygotowaną przez eksperta baze reguł. W poprzednim bloku dane zmiennych wejściowych zamienione zostały na stopnie spełnienia odpowiednich predykatów w przesłankach reguł. W tym bloku następuje uruchomienie wszystkich reguł, których przesłanki są spełnione, wyliczenie zbioru rozmytego który jest wynikiem tych reguł oraz kumulacja wyników w każdym bloku reguł.
+Na etapie agregacji stopień spełnienia każdej z reguł obliczany jest na podstawie stopnia spełnienia ich przesłanek. W tym celu używane są logiczne operatory rozmyte znane z logiki Boole'a : AND, OR oraz NOT. W zastosowanej przeze mnie implementacji języka Fuzzy Control Language dostęptne następujące funkcje dla tych spójników : 
+	AND  OR
+MIN:  TODO TABELKA funkcji
+PROD: AND OR
+
+Te reguły dla których stopień spełnienia zagregowanych przesłanek jest niezerowy zostają aktywowane. W wyniku wnioskowania obliczany jest zbiór rozmyty stanowiący konkluzję danej reguły. Model zastosowany w specyfikacji FCL zakłada tutaj użycie operatora min. Polega to obrazowo na "obcięciu" zbioru termu wyjściowego na wysokości stopnia spełnienia zagregowanych przesłanek :
+
+TODO WYKRES PRZYKLADOWEGO OBCIECIA ZBIORU TERMU
+
+Dodatkowo w konkluzji każdej reguły możemy podać kilka predykatów dotyczących różnych lub nawet tej samej zmiennej, rozdzielając je operatorem AND. Użycie operatora o tej nazwie podyktowane było zachowaniem czytelności reguł, nie ma on żadnego znaczenia pod względem matematycznym.
+Wynikowe zbiory rozmyte kumulują się w ramach danego bloku funkcji sterownika w zbiór rozmyty, który poddawany jest następnie procesowi wyostrzania. Kumulacja polega na zebraniu wszystkich wynikowych zbiorów rozmytych danej zmiennej w jeden zbiór za pomocą funkcji kumulacji. Przykładowe funkcje kumulacji dostępne w implementowanym języku FCL :
+
+MIN
+PROD TODO funkcje
+
+
+
+

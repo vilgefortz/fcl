@@ -1,0 +1,23 @@
+I.1
+
+Reguły sterownika rozmytego
+TRESC :
+
+Reguły którymi opisuje się sterownik rozmyty tworzone są następująco :
+
+if <przesłanka> then <konkluzja>
+
+Przesłankę tworzy się za pomocą serii predykatów połączonych spójnikami logicznymi, Konkluzję tworzą kolejne predykaty. Struktura ta przypomina swą budową bazy wiedzy znane z systemów ekspertowych, jednak wewnątrz każdej reguły "dzieje się" tu dużo więcej. 
+
+W zależności od zastosowanego modelu rozmytego możemy spotkać się z różnymi formami predykatów. Aplikacja, która jest przedmiotem tej pracy, bazuje na modelu Mamdaniego (TODO CITE ABOUT MAMDANI). W tym modelu predykaty są postaci :
+A is B, gdzie :
+A - nazwa danej zmiennej lingwistycznej
+B - jeden z termów opisujących tą zmienną.
+
+Teoria zbiorów rozmytych zakłada, że termy określające zmienną lingwistyczną mają postać zbiorów rozmytych. Zmienna jest więc zbiorem nazwanych zbiorów rozmytych, które mają nazwy wzięte z języka naturalnego. Predykaty w tej postaci może wyglądać tak :
+temperatura is niska
+w miejsce niska możemy wstawić też np. wysoka, śerdnia. Definiujemy w ten sposób kolejne termy ze zbioru termów zmiennej temperatura. Termom tym przypisane są pewne zbiory rozmyte które opisują małą, średnią i wysoką temperaturę. 
+
+Zmienne lingwistyczne które występują po lewej stronie reguły nazywamy zmiennymi wejściowymi sterownika. Natomias zmienne znajdujące się w konkluzji to zmienne w-wyjściowe. Do wnioskowania rozmytego jako podstawę użyto uogólnioną na teorię zbiorów rozmytych regułę modus ponens. Zachowano element, który określał, że prawdziwość przesłanki implikacji pozwala wnioskować o prawdziwości konkluzji. Dodano pojęcie stopnia prawdziwości albo stopnia spełnienia zarówno przesłanki jak i konkluzji. 
+
+
