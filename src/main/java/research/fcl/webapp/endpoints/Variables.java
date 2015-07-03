@@ -84,7 +84,8 @@ public class Variables {
 			FunctionBlock fb = app.getFunctionBlock(fbName);
 			BaseFunctionVariable variable = fb.getVariable(varName);
 			List<Term> termsList = variable.getAllTerms();
-			termsList.forEach (e -> System.out.println ("RETRIEVED TERM FOR '" + varName + "' : '" + e.getName() + "'"));
+			System.out.println (termsList);
+			termsList.forEach (e -> System.out.println ("RETRIEVED TERM FOR '" + varName + "' : '" + (e!=null?e.getName():"null?") + "'"));
 			DefaultGsonMapper mapper = new DefaultGsonMapper(termsList);
 			return mapper.toJson();
 		} catch (Exception e) {

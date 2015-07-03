@@ -1,30 +1,30 @@
-Roboczo :
+
 Wstęp
 
-I. Podstawy teorii modelowania systemĂÂłw rozmytych
-1. ReguĂ‚Âły sterownika rozmytego
+I. Podstawy teorii modelowania systemów rozmytych
+1. Reguły sterownika rozmytego
 2. Bloki i proces wnioskowania rozmytego
 2.1. Blok rozmywania
-2.2. Blok i metody wnioskowania
+2.2. Blok i metody inferencji
 2.3. Blok i metody wyostrzania
-3. PrzykĂ‚Âład wnioskowania rozmytego
-3.1 Modelowanie rozmyte, przykĂ‚Âłady
+3. Przykład wnioskowania rozmytego
+3.1 Modelowanie rozmyte, przykłady
 //tutaj jakies przykladowe modele (np Mamdaniego, Rozmyte sieci neuronowe)
-II. Opis skĂ‚Âładni jĂÂŞzyka Fuzzy Control Language
+II. Opis składni języka Fuzzy Control Language
 1. IEC 61131-7
 2. Blok funkcji
 3. Blok zmiennych
-4. Blok reguĂ‚Âł
+4. Blok reguł
 
-III. SzczegĂÂłĂ‚Âły implementacji sterownika FCL
-1. SzczegĂÂłĂ‚Âły implementacji klas sterownika
-2. SposĂÂłb reprezentacji systemu rozmytego w strukturze klas w Javie
+III. Szczegóły implementacji sterownika FCL
+1. Szczegóły implementacji klas sterownika
+2. Sposób reprezentacji systemu rozmytego w strukturze klas w Javie
 2.1 Klasa zmiennej, termu i reguly
 2.2 Klasa bloku funkcji
-3. MoĂ‚ÂżliwoĂ…â€ści rozwoju funkcji jĂÂŞzyka.
-3.1 Klasy metod tworzenia termĂÂłw
-3.2 Klasy modyfikatorĂÂłw
-3.3 Klasy operatorĂÂłw, metod defuzyfikacji, koniunkcji, alternatywy i akumulacji
-3.4 Wybrane przykĹ‚ady - np. sterownik SE szklarni, kilkanaĹ›cie reguĹ‚, zmienne lingwistyczne....
+3. Możliwości rozwoju funkcji języka.
+3.1 Klasy metod tworzenia termów
+3.2 Klasy modyfikatorów
+3.3 Klasy operatorów, metod defuzyfikacji, koniunkcji, alternatywy i akumulacji
+3.4 Wybrane przykłady - np. sterownik SE szklarni, kilkanaście reguł, zmienne lingwistyczne....
 
 IV. Podsumowanie

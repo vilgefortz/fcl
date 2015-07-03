@@ -20,8 +20,12 @@
 	cursor:pointer;
 }
 .zoom-content {
-	width:100%;
-	height:475px;
+	width:95%;
+	margin-left: 2.5%;
+	margin-right: 2.5%;
+	height:455px;
+	margin-top:10px;
+	margin-bottom:10px;
 }
 .zoomed {
 	z-index : 200;
@@ -30,7 +34,7 @@
 	width:700px;
 	height:500px;
 	margin:0 auto;
-	background:#f7f7f7;
+	background:#ffffff;
 	position:absolute;
 	left:50%;
 	top:50%;

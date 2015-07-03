@@ -9,6 +9,7 @@ public class DefaultAccumulationMethods extends ArrayList<AccumulationMethod>{
 
 	public DefaultAccumulationMethods () {
 		this.add (new MaxMethod("max"));
+		this.add (new ProdMethod("prod"));
 	}
 	public String[] getNames() {
 		List<String> l = new ArrayList<String> ();
