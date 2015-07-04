@@ -33,7 +33,7 @@ public class ProdMethod extends AccumulationMethod {
 
 		@Override
 		public double fun(double val) {
-			return a.fun(val)*b.fun(val);
+			return a.fun(val) + b.fun(val) - a.fun(val)*b.fun(val);
 		}
 
 		@Override

@@ -17,7 +17,7 @@ import research.fcl.webapp.endpoints.dto.TermPointsDto;
 
 
 public class TermEndpoint {
-	public static int resolution = 200;
+	public static int resolution = 400;
 	//responses
 	public static String createErrorJson (String msg) {
 		return"{\"error\":\"" + msg + "\"}";
