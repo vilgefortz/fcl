@@ -6,6 +6,7 @@ import java.util.List;
 public class DefaultDeffuzificationMethods extends ArrayList<DefuzzificationMethod>{
 	public DefaultDeffuzificationMethods() {
 		this.add (new CogMethod("cog"));
+		this.add (new CosMethod("cos"));
 	}
 	public String[] getNames() {
 		List<String> l = new ArrayList<String> ();

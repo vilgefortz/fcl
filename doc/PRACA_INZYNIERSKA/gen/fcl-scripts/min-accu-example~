@@ -1,0 +1,25 @@
+FUNCTION_BLOCK Fuzzy_FB
+	VAR_INPUT
+		temp: REAL;
+	END_VAR
+	VAR_OUTPUT
+		cut :real;
+	END_VAR 
+	FUZZIFY temp 
+		TERM cold := (0,0) (2,0) (4,1) (6,0) (7,0);
+		TERM hot := (-10, 0) (10, 0);
+	END_FUZZIFY 
+	DEFUZZIFY cut
+		TERM cut_term := (0,0) (2,0) (4,1) (6,0) (7,0);
+		METHOD : COG;  
+		DEFAULT := -.2; 
+		accu:max;
+	END_DEFUZZIFY 
+	RULEBLOCK No1  
+		AND : MIN;
+		rule 1: if temp is cold then cut is cut_term;
+		rule 2: if temp is hot then cut is cut_term;
+	END_RULEBLOCK                
+END_FUNCTION_BLOCK
+
+			

@@ -1,0 +1,86 @@
+
+/*Jeżeli temperatura jest bardzo niska to nie podlewamy trawnika
+Jeżeli wilgotność jest duża i temperatura jest niska to nie podlewamy trawnika
+Jeżeli wilgotność jest duża i temperatura jest średnia to nie podlewamy trawnika
+Jeżeli wilgotność jest duża i temperatura jest wysoka to ustawiamy słabe zraszanie
+Jeżeli wilgotność jest średnia i temperatura jest niska to nie podlewamy trawnika
+Jeżeli wilgotność jest średnia i temperatura jest średnia to ustawiamy słabe zraszanie
+Jeżeli wilgotność jest średnia i temperatura jest wysoka to ustawiamy średnie zraszanie
+Jeżeli wilgotność jest niska i temperatura jest niska to ustawiamy słabe zraszanie
+Jeżeli wilgotność jest niska i temperatura jest średnia to ustawiamy średnie zraszanie
+Jeżeli wilgotność jest niska i temperatura jest wysoka to ustawiamy silne zraszanie*/
+FUNCTION_BLOCK Fuzzy_FB
+	VAR_INPUT
+		wilgotnosc: REAL;
+		temperatura : REAL;
+	END_VAR
+	VAR_OUTPUT
+		zraszanie : REAL;
+	END_VAR 
+	/*temperatura bardzo niska jest poniżej 5°C
+temperatura niska to około 10°C
+temperatura średnia to około 18°C
+temperatura niska to 22 °C i więcej
+dowiadujemy się też, że około to +- 8°C
+
+wilgotność niska to poniżej 10%
+wilgotność średnia to około 15%
+wilgotność duża to to powyżej 20%
+około to +- 4%
+
+zraszanie słabe to 20%
+zraszanie średnie to 40%
+zraszanie silne to 60%
+*/
+    FUZZIFY temperatura 
+		TERM bardzo_niska := (-15,1) (5,1) (13,0);
+		TERM niska := (2, 0) (10, 1) (18, 0);
+		TERM srednia := (10, 0) (18, 1) (26,0);
+		TERM wysoka :=  (17,0) (25, 1) (40, 1);
+	END_FUZZIFY 
+	FUZZIFY wilgotnosc
+		TERM niska := (0, 1) (10, 1) (14, 0);
+		TERM srednia := (11, 0) (15, 1) (19,0);
+		TERM duza :=  (16,0) (20, 1) (40, 1);
+	END_FUZZIFY 
+	
+	DEFUZZIFY zraszanie
+	    TERM min := (-2,0);
+	    TERM brak := 0;
+		TERM slabe := 20;
+		TERM srednie := 40; 
+		TERM silne := 60;
+		TERM max := (80,0);
+		ACCU : MAX;
+		METHOD : COS; 
+		DEFAULT := -.2;
+	END_DEFUZZIFY 
+
+
+/*Jeżeli temperatura jest bardzo niska to nie podlewamy trawnika
+Jeżeli wilgotność jest duża i temperatura jest niska to nie podlewamy trawnika
+Jeżeli wilgotność jest duża i temperatura jest średnia to nie podlewamy trawnika
+Jeżeli wilgotność jest duża i temperatura jest wysoka to ustawiamy słabe zraszanie
+Jeżeli wilgotność jest średnia i temperatura jest niska to nie podlewamy trawnika
+Jeżeli wilgotność jest średnia i temperatura jest średnia to ustawiamy słabe zraszanie
+Jeżeli wilgotność jest średnia i temperatura jest wysoka to ustawiamy średnie zraszanie
+Jeżeli wilgotność jest niska i temperatura jest niska to ustawiamy słabe zraszanie
+Jeżeli wilgotność jest niska i temperatura jest średnia to ustawiamy średnie zraszanie
+Jeżeli wilgotność jest niska i temperatura jest wysoka to ustawiamy silne zraszanie*/
+
+	RULEBLOCK No1  
+	    RULE 1: if temperatura is bardzo_niska then zraszanie is brak;
+	    RULE 2: if wilgotnosc is duza and temperatura is niska then zraszanie is brak;
+	    RULE 3: if wilgotnosc is duza and temperatura is srednia then zraszanie is brak;
+	    RULE 4: if wilgotnosc is duza and temperatura is wysoka then zraszanie is slabe;
+	    RULE 5: if wilgotnosc is srednia and temperatura is niska then zraszanie is brak;
+	    RULE 6: if wilgotnosc is srednia and temperatura is srednia then zraszanie is slabe;
+	    RULE 7: if wilgotnosc is srednia and temperatura is wysoka then zraszanie is srednie;
+	    RULE 8: if wilgotnosc is niska and temperatura is niska then zraszanie is slabe;
+	    RULE 9: if wilgotnosc is niska and temperatura is srednia then zraszanie is srednie;
+	    RULE 10: if wilgotnosc is niska and temperatura is wysoka then zraszanie is silne;
+		AND : MIN;
+	END_RULEBLOCK
+END_FUNCTION_BLOCK
+
+			        
