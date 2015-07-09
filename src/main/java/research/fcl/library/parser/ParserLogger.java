@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
-public class JsonLogger {
+public class ParserLogger {
 	//@Expose
 	public List<LogEntry> info = new ArrayList<LogEntry>();
 	@Expose

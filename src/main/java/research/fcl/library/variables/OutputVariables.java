@@ -2,6 +2,8 @@ package research.fcl.library.variables;
 
 import java.util.ArrayList;
 
+import research.fcl.library.variables.exceptions.OutputVariableNotFoundException;
+
 public class OutputVariables extends ArrayList<OutputVariable> {
 
 	public OutputVariable getOutputVariable (String name) throws OutputVariableNotFoundException {

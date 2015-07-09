@@ -6,8 +6,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import research.fcl.library.Application;
 import research.fcl.library.functionblock.FunctionBlock;
-import research.fcl.library.functionblock.Ruleblock;
+import research.fcl.library.rules.Ruleblock;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.InlineVariable;
 import research.fcl.library.variables.InputVariable;
@@ -81,10 +82,11 @@ public class Parser extends ParserBase {
 							p2-> {
 								if (expect ("_output").isFound()) {
 									rollbackPointer();
-									pointer -=3;
+									pointer -=3;// magic number - width of 'var'
 								}
 								else 
-								while (!expect("end_var").isFound()) {
+								if (expect("_inline").isFound()) {
+									while (!expect("end_var").isFound()) {
 									expectWordForce("variable name or 'end_var'").execute(
 											p3 -> {
 												if (isKeyword(p3.word)) {
@@ -106,6 +108,7 @@ public class Parser extends ParserBase {
 																	});
 														});
 											});
+									}
 								}
 							});
 					expectForce("var_output").execute(
@@ -326,5 +329,9 @@ public class Parser extends ParserBase {
 			e.printStackTrace();
 		}
 		this.app.logger=this.logger;
+	}
+
+	public Application getApplication() {
+		return this.app;
 	}
 }

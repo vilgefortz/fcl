@@ -1,4 +1,4 @@
-package research.fcl.library.variables;
+package research.fcl.library.variables.exceptions;
 
 public class InlineVariableNotFoundException extends Exception {
 	public InlineVariableNotFoundException(String name) {

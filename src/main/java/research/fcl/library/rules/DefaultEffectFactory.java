@@ -2,12 +2,11 @@ package research.fcl.library.rules;
 
 import java.util.List;
 
-import research.fcl.library.functionblock.Ruleblock;
 import research.fcl.library.parser.utils.ParsingUtils;
 import research.fcl.library.variable.term.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
-import research.fcl.library.variables.OutputVariableNotFoundException;
-import research.fcl.library.variables.TermNotFoundException;
+import research.fcl.library.variables.exceptions.OutputVariableNotFoundException;
+import research.fcl.library.variables.exceptions.TermNotFoundException;
 
 public class DefaultEffectFactory {
 

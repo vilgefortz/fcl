@@ -10,8 +10,10 @@ import research.fcl.library.deffuzification.DefaultDeffuzificationMethods;
 import research.fcl.library.deffuzification.DefuzzificationMethod;
 import research.fcl.library.deffuzification.DefuzzificationMethodNotRecognisedException;
 import research.fcl.library.enviroment.Enviroment;
+import research.fcl.library.enviroment.VariableSet;
 import research.fcl.library.functionblock.FunctionBlock;
-import research.fcl.library.parser.JsonLogger;
+import research.fcl.library.functionblock.FunctionBlocks;
+import research.fcl.library.parser.ParserLogger;
 import research.fcl.library.parser.Parser;
 import research.fcl.library.parser.ParserBase;
 import research.fcl.library.variable.term.DefaultTermFactory;
@@ -19,6 +21,8 @@ import research.fcl.library.variable.term.TermFactory;
 import research.fcl.library.accumulation.AccumulationMethod;
 import research.fcl.library.accumulation.AccumulationMethodNotRecognisedException;
 import research.fcl.library.accumulation.DefaultAccumulationMethods;
+
+
 
 
 import com.google.gson.annotations.Expose;
@@ -33,12 +37,18 @@ public class Application {
 	@Expose
 	public FunctionBlocks functionBlocks =new FunctionBlocks();
 	@Expose
-	public JsonLogger logger;
+	public ParserLogger logger;
 	public TermFactory termFactory = new DefaultTermFactory (this);
 	private DefaultAccumulationMethods accuMethods = new DefaultAccumulationMethods();
 	private DefaultDeffuzificationMethods deffuMethods = new DefaultDeffuzificationMethods(); 
 	private DefaultAndMethods andMethods = new DefaultAndMethods ();
-	
+	public double getValue (String name) {
+		return this.getEnv().getValueOf(name);
+	}
+	public VariableSet setValue (String name, double value) {
+		this.getEnv().setValue(name, value);
+		return this.getEnv();
+	}
 	public static void main (String [] args) throws FileNotFoundException {
 		Parser p = new Parser(new File ("test.fcl"));
 		p.parse();

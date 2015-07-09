@@ -3,11 +3,10 @@ package research.fcl.library.rules;
 import java.util.List;
 import java.util.logging.Logger;
 
-import research.fcl.library.functionblock.Ruleblock;
-import research.fcl.library.variables.InlineVariableNotFoundException;
-import research.fcl.library.variables.InputVariableNotFoundException;
-import research.fcl.library.variables.OutputVariableNotFoundException;
-import research.fcl.library.variables.TermNotFoundException;
+import research.fcl.library.variables.exceptions.InlineVariableNotFoundException;
+import research.fcl.library.variables.exceptions.InputVariableNotFoundException;
+import research.fcl.library.variables.exceptions.OutputVariableNotFoundException;
+import research.fcl.library.variables.exceptions.TermNotFoundException;
 
 
 public class DefaultRuleFactory {

@@ -1,12 +1,11 @@
-package research.fcl.library.functionblock;
+package research.fcl.library.rules;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import research.fcl.library.andmethods.AndMethod;
 import research.fcl.library.andmethods.DefaultAndMethods;
-import research.fcl.library.rules.DefaultRuleFactory;
-import research.fcl.library.rules.Rule;
+import research.fcl.library.functionblock.FunctionBlock;
 
 import com.google.gson.annotations.Expose;
 
@@ -23,9 +22,7 @@ public class Ruleblock {
 		this.functionBlock = fb;
 		ruleFactory = new DefaultRuleFactory(this);
 	}
-	public void execute() {
-		
-	}
+	
 	public void setName(String ruleBlockName) {
 		this.name=ruleBlockName;
 		
@@ -41,7 +38,7 @@ public class Ruleblock {
 		return this.andMethod;
 	}
 	public research.fcl.library.enviroment.Enviroment getEnviroment() {
-		return this.functionBlock.env;
+		return this.functionBlock.getEnviroment();
 	}
 	public FunctionBlock getFunctionBlock() {
 		return this.functionBlock;

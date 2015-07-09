@@ -25,7 +25,7 @@ public class ParserBase {
 	public Application app = new Application();
 	public boolean done = false;
 	public String word;
-	public JsonLogger logger = new JsonLogger();
+	public ParserLogger logger = new ParserLogger();
 	public boolean fatalState;
 	private int lastPointer;
 

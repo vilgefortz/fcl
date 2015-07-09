@@ -2,6 +2,8 @@ package research.fcl.library.variables;
 
 import java.util.ArrayList;
 
+import research.fcl.library.variables.exceptions.InlineVariableNotFoundException;
+
 public class InlineVariables extends ArrayList<InlineVariable> {
 
 	public BaseFunctionVariable getInlineVariable (String name) throws InlineVariableNotFoundException {

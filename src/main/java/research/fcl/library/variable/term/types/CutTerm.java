@@ -1,6 +1,7 @@
-package research.fcl.library.rules;
+package research.fcl.library.variable.term.types;
 
 import research.fcl.library.variable.term.Term;
+
 
 public class CutTerm extends Term {
 

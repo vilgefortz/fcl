@@ -2,13 +2,14 @@ package research.fcl.library.functionblock;
 
 import research.fcl.library.Application;
 import research.fcl.library.enviroment.Enviroment;
+import research.fcl.library.rules.Ruleblocks;
 import research.fcl.library.variables.BaseFunctionVariable;
-import research.fcl.library.variables.InlineVariableNotFoundException;
 import research.fcl.library.variables.InlineVariables;
-import research.fcl.library.variables.InputVariableNotFoundException;
 import research.fcl.library.variables.InputVariables;
-import research.fcl.library.variables.OutputVariableNotFoundException;
 import research.fcl.library.variables.OutputVariables;
+import research.fcl.library.variables.exceptions.InlineVariableNotFoundException;
+import research.fcl.library.variables.exceptions.InputVariableNotFoundException;
+import research.fcl.library.variables.exceptions.OutputVariableNotFoundException;
 
 import com.google.gson.annotations.Expose;
 
@@ -43,9 +44,6 @@ public class FunctionBlock {
 	}
 	public void setEnv(Enviroment env) {
 		this.env = env;
-	}
-	public void execute () {
-		ruleblocks.execute();
 	}
 	public BaseFunctionVariable getLeftVariable(String varName) throws  InputVariableNotFoundException {
 		try {
@@ -84,5 +82,8 @@ public class FunctionBlock {
 	}
 	public String getName() {
 		return this.name;
+	}
+	public Enviroment getEnviroment() {
+		return this.env;
 	}
 }

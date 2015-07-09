@@ -14,6 +14,7 @@ import research.fcl.library.rules.Rule;
 import research.fcl.library.variable.term.Term;
 import research.fcl.library.variable.term.TermDeclarationErrorException;
 import research.fcl.library.variable.term.types.SingletonTerm;
+import research.fcl.library.variables.exceptions.TermNotFoundException;
 
 import com.google.gson.annotations.Expose;
 

@@ -2,6 +2,8 @@ package research.fcl.library.variables;
 
 import java.util.ArrayList;
 
+import research.fcl.library.variables.exceptions.InputVariableNotFoundException;
+
 public class InputVariables extends ArrayList<InputVariable> {
 
 	public BaseFunctionVariable getInputVariable (String name) throws InputVariableNotFoundException {

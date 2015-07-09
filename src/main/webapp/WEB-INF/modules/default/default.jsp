@@ -990,6 +990,7 @@ var options = {
 			fb:'Fuzzy_FB',
 		}, function (jsondata) {
 			dates = $.parseJSON(jsondata);
+			self.data = dates;
 			var vars = {
 			x : dates.vars[0].x,
 			y : dates.vars[0].y,
@@ -1053,6 +1054,31 @@ var options = {
 	ThreeDWindow.prototype.refresh = function () {
 		this.getVariables ();
 	}
+	ThreeDWindow.prototype.zoom = function () {
+		var self = this;
+		var body = $("body");
+		body.prepend ("<div class='zoomed'><div class='window-header'><div class='window-title'>"+ 
+		"Variable : " + self.variable + "</div><div class='window-management'><div class='mng-close mng-button'></div></div><div class='zoom-content'></div></div></div>");
+		var zoomed = body.find (".zoomed").first();
+		var close = zoomed.find(".mng-close").first();
+		close.click (function () {
+			zoomed.remove();
+		});
+		var content = zoomed.find(".zoom-content").first();
+		 var dates = self.data;
+		 var stage = new Elegans.Stage(content[0], {width:455, height:500,axis_labels: {x:self.ivar[0],y:self.ivar[1], z:self.ovar}, });
+		    stage.add(new Elegans.Surface( dates.vars[0] , 
+				{
+					has_legend:false,
+					fill_colors:['#0000ff', '#00ff00','#ffff00','#ff0000' ]
+				}
+			));
+		    stage.render();
+		    //setting sizes
+		    var canvas = contnet.find('canvas').first();
+		    canvas.css ( { width : '100%', height : '100%' } );		
+		};
+	
 
   </script>
 

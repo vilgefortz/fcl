@@ -4,13 +4,12 @@ import java.util.logging.Logger;
 
 import research.fcl.library.andmethods.AndMethod;
 import research.fcl.library.functionblock.FunctionBlock;
-import research.fcl.library.functionblock.Ruleblock;
 import research.fcl.library.parser.utils.ParsingUtils;
 import research.fcl.library.variable.term.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
-import research.fcl.library.variables.InlineVariableNotFoundException;
-import research.fcl.library.variables.InputVariableNotFoundException;
-import research.fcl.library.variables.TermNotFoundException;
+import research.fcl.library.variables.exceptions.InlineVariableNotFoundException;
+import research.fcl.library.variables.exceptions.InputVariableNotFoundException;
+import research.fcl.library.variables.exceptions.TermNotFoundException;
 
 public class DefaultActionFactory {
 	protected String IS = "is";

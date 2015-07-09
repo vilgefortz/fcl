@@ -1,8 +1,6 @@
-package research.fcl.library;
+package research.fcl.library.functionblock;
 
 import java.util.ArrayList;
-
-import research.fcl.library.functionblock.FunctionBlock;
 
 public class FunctionBlocks extends ArrayList<FunctionBlock>{
 	

@@ -11,6 +11,7 @@ import research.fcl.library.variable.term.Term;
 import research.fcl.library.accumulation.AccumulationMethod;
 import research.fcl.library.accumulation.AccumulationMethodNotRecognisedException;
 import research.fcl.library.variable.term.types.SingletonTerm;
+import research.fcl.library.variables.exceptions.TermNotFoundException;
 
 import com.google.gson.annotations.Expose;
 

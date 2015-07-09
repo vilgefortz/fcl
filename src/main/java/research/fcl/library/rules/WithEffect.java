@@ -3,6 +3,7 @@ package research.fcl.library.rules;
 import com.google.gson.annotations.Expose;
 
 import research.fcl.library.variable.term.Term;
+import research.fcl.library.variable.term.types.CutTerm;
 import research.fcl.library.variables.BaseFunctionVariable;
 
 public class WithEffect extends Effect {

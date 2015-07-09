@@ -1,4 +1,4 @@
-package research.fcl.library.variables;
+package research.fcl.library.variables.exceptions;
 
 public class TermNotFoundException extends Exception {
 

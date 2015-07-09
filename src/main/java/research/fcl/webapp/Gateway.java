@@ -51,9 +51,9 @@ public class Gateway extends HttpServlet {
 		Enviroment env = (Enviroment) session.getAttribute("env");
 		p.parse();
 		if (env == null)
-			env = p.app.getEnv();
+			env = p.getApplication().getEnv();
 		p.setEnviroment(env);
-		session.setAttribute("app", p.app);
+		session.setAttribute("app", p.getApplication());
 		pw.write("1");
 		return;
 	}
