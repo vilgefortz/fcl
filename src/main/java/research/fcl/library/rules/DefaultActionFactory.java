@@ -5,7 +5,13 @@ import java.util.logging.Logger;
 import research.fcl.library.andmethods.AndMethod;
 import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.library.parser.utils.ParsingUtils;
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.rules.cause.Action;
+import research.fcl.library.rules.cause.AndAction;
+import research.fcl.library.rules.cause.OrAction;
+import research.fcl.library.rules.cause.TermAction;
+import research.fcl.library.rules.modifiers.Modifier;
+import research.fcl.library.rules.modifiers.ModifierFactory;
+import research.fcl.library.terms.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.exceptions.InlineVariableNotFoundException;
 import research.fcl.library.variables.exceptions.InputVariableNotFoundException;
@@ -16,7 +22,7 @@ public class DefaultActionFactory {
 	protected String OR = "or";
 	protected String AND = "and";
 	private Ruleblock ruleblock;
-	public DefaultActionFactory (Ruleblock rb) {
+	public DefaultActionFactory (Ruleblock rb, ModifierFactory mf) {
 		this.ruleblock=rb;
 	}
 	public Action createAction(String text, Rule r) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, TermNotFoundException {
@@ -69,11 +75,19 @@ public class DefaultActionFactory {
 	}
 	
 	private Term parseTerm(String text, BaseFunctionVariable v, Rule r) throws RuleParsingException, TermNotFoundException {
+		System.out.println ("PARSING TERM : " + text + " for variable " + v.getName() + " in rule "  + r.getName());
 		String word = ParsingUtils.getFirstWord(text = text.trim());
+		ModifierFactory mf = new DefaultModifierFactory();
+		Modifier mod = null;
+		if (mf.isModifier(word)) {
+			mod = mf.get(word);
+			word = ParsingUtils.getFirstWord(text = text.substring(word.length()).trim());
+		}
 		if (v.hasTerm (word)) {
 			String w =text.substring(word.length()).trim();
 			if (!w.equals("")) throw new RuleParsingException("Unexpected '" + w + "' after term '" + word);
-			return v.getTerm(word);
+			Term t = v.getTerm(word);
+			return mod == null? t : mod.modify(t);
 		}
 		throw new RuleParsingException("Term '" + word + "' is not defined for variable '" + v.getName() + "'");
 	}

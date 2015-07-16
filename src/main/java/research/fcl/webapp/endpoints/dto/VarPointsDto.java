@@ -1,6 +1,6 @@
 package research.fcl.webapp.endpoints.dto;
 
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.terms.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.OutputVariable;
 import research.fcl.library.variables.InputVariable;

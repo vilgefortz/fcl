@@ -4,7 +4,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.google.gson.annotations.Expose;
 
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.terms.Term;
 
 public class MaxMethod extends AccumulationMethod {
 

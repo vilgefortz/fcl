@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.ArrayUtils;
 
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.terms.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.OutputVariable;
 import research.fcl.library.variables.InputVariable;

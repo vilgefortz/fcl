@@ -1,6 +1,6 @@
 package research.fcl.library.accumulation;
 
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.terms.Term;
 
 import com.google.gson.annotations.Expose;
 

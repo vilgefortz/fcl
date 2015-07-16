@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import research.fcl.library.Application;
 import research.fcl.library.functionblock.FunctionBlock;
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.terms.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.webapp.endpoints.dto.DefaultGsonMapper;
 import research.fcl.webapp.endpoints.dto.TermPointsDto;

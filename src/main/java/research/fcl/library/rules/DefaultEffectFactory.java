@@ -3,7 +3,10 @@ package research.fcl.library.rules;
 import java.util.List;
 
 import research.fcl.library.parser.utils.ParsingUtils;
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.rules.effect.Effect;
+import research.fcl.library.rules.effect.NormalEffect;
+import research.fcl.library.rules.effect.WithEffect;
+import research.fcl.library.terms.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.exceptions.OutputVariableNotFoundException;
 import research.fcl.library.variables.exceptions.TermNotFoundException;

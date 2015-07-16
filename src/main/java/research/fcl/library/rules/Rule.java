@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import research.fcl.library.rules.cause.Cause;
+import research.fcl.library.rules.effect.Effect;
 import research.fcl.library.variables.BaseFunctionVariable;
 
 import com.google.gson.annotations.Expose;

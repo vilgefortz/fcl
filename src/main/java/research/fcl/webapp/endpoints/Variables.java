@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 import research.fcl.library.Application;
 import research.fcl.library.enviroment.Enviroment;
 import research.fcl.library.enviroment.Variable;
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.terms.Term;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.webapp.endpoints.dto.DefaultGsonMapper;

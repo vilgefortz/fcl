@@ -11,9 +11,9 @@ import research.fcl.library.enviroment.Observer;
 import research.fcl.library.enviroment.Variable;
 import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.library.rules.Rule;
-import research.fcl.library.variable.term.Term;
-import research.fcl.library.variable.term.TermDeclarationErrorException;
-import research.fcl.library.variable.term.types.SingletonTerm;
+import research.fcl.library.terms.Term;
+import research.fcl.library.terms.TermDeclarationErrorException;
+import research.fcl.library.terms.types.SingletonTerm;
 import research.fcl.library.variables.exceptions.TermNotFoundException;
 
 import com.google.gson.annotations.Expose;

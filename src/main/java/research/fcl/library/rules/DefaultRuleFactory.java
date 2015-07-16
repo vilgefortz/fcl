@@ -3,6 +3,8 @@ package research.fcl.library.rules;
 import java.util.List;
 import java.util.logging.Logger;
 
+import research.fcl.library.rules.cause.Cause;
+import research.fcl.library.rules.effect.Effect;
 import research.fcl.library.variables.exceptions.InlineVariableNotFoundException;
 import research.fcl.library.variables.exceptions.InputVariableNotFoundException;
 import research.fcl.library.variables.exceptions.OutputVariableNotFoundException;
@@ -14,9 +16,11 @@ public class DefaultRuleFactory {
 	private Ruleblock ruleblock;
 	private DefaultActionFactory actionFactory;
 	private DefaultEffectFactory effectFactory;
+	private DefaultModifierFactory modifierFactory;
 	public DefaultRuleFactory(Ruleblock rb) {		
 		this.ruleblock=rb;
-		this.actionFactory = new DefaultActionFactory(this.ruleblock);
+		this.modifierFactory = new DefaultModifierFactory ();
+		this.actionFactory = new DefaultActionFactory(this.ruleblock, this.modifierFactory);
 		this.effectFactory = new DefaultEffectFactory(this.ruleblock);
 	}
 	public Rule fromString(String name, String rule) throws RuleParsingException, InlineVariableNotFoundException, InputVariableNotFoundException, OutputVariableNotFoundException, TermNotFoundException {

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import research.fcl.library.deffuzification.DefuzzificationMethod;
-import research.fcl.library.deffuzification.DefuzzificationMethodNotRecognisedException;
+import research.fcl.library.defuzzification.DefuzzificationMethod;
+import research.fcl.library.defuzzification.DefuzzificationMethodNotRecognisedException;
 import research.fcl.library.functionblock.FunctionBlock;
-import research.fcl.library.variable.term.Term;
+import research.fcl.library.terms.Term;
+import research.fcl.library.terms.types.SingletonTerm;
 import research.fcl.library.accumulation.AccumulationMethod;
 import research.fcl.library.accumulation.AccumulationMethodNotRecognisedException;
-import research.fcl.library.variable.term.types.SingletonTerm;
 import research.fcl.library.variables.exceptions.TermNotFoundException;
 
 import com.google.gson.annotations.Expose;
