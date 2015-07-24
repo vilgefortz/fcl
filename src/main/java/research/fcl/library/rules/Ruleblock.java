@@ -5,6 +5,7 @@ import java.util.List;
 
 import research.fcl.library.andmethods.AndMethod;
 import research.fcl.library.andmethods.DefaultAndMethods;
+import research.fcl.library.andmethods.MinMethod;
 import research.fcl.library.functionblock.FunctionBlock;
 
 import com.google.gson.annotations.Expose;
@@ -16,7 +17,7 @@ public class Ruleblock {
 	@Expose
 	private String name;
 	public DefaultRuleFactory ruleFactory; 
-	private AndMethod andMethod = DefaultAndMethods.MIN;
+	private AndMethod andMethod = new MinMethod();
 	
 	public Ruleblock (FunctionBlock fb) {
 		this.functionBlock = fb;

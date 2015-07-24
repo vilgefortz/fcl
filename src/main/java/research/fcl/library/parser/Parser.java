@@ -35,7 +35,35 @@ public class Parser extends ParserBase {
 			doc = document.toCharArray();
 		log("Opened file " + file.getAbsolutePath() + ", content:\n" + document);
 	}
+	public void parseInputVariables (FunctionBlock fb) {
+		expectForce("var_input").execute(
+				p2-> {
+					while (!expect("end_var").isFound()) {
+						expectWordForce("variable name or 'end_var'").execute(
+								p3 -> {
+									if (isKeyword(p3.word)) {
+										logFatal("variable name", "keyword " + p3.word);
+									}
+									InputVariable var = new InputVariable(p3.word,fb);
+									expectForce(":").execute(
+											p4 -> {
+												expectOneOfForce(
+														ApplcationConfig
+																.getVariableTypes(),
+														"variable type").execute(
+														p5 -> {
+															var.setType(p5.word);
+															expectForce(";").execute(
+																	p6 -> {
+																		fb.input.add(var);
+																	});
+														});
+											});
+								});
+					}
+				});
 
+	}
 	public void parse() {
 		try {
 		this.eraseComments();
@@ -45,99 +73,16 @@ public class Parser extends ParserBase {
 				p1 -> {
 					FunctionBlock fb = new FunctionBlock(app);
 					fb.setEnv(app.getEnv());
-					app.functionBlocks.add(fb);
+					app.addFunctionBlock(fb);
 					expectWordForce("function block name").execute(p2 -> {
 						if (isKeyword(p2.word)) {
 							logFatal("function block name", "keyword " + p2.word);
 						}
 						fb.name = p2.word;
 					});
-					expectForce("var_input").execute(
-							p2-> {
-								while (!expect("end_var").isFound()) {
-									expectWordForce("variable name or 'end_var'").execute(
-											p3 -> {
-												if (isKeyword(p3.word)) {
-													logFatal("variable name", "keyword " + p3.word);
-												}
-												InputVariable var = new InputVariable(p3.word,fb);
-												expectForce(":").execute(
-														p4 -> {
-															expectOneOfForce(
-																	ApplcationConfig
-																			.getVariableTypes(),
-																	"variable type").execute(
-																	p5 -> {
-																		var.setType(p5.word);
-																		expectForce(";").execute(
-																				p6 -> {
-																					fb.input.add(var);
-																				});
-																	});
-														});
-											});
-								}
-							});
-					expect("var").execute(
-							p2-> {
-								if (expect ("_output").isFound()) {
-									rollbackPointer();
-									pointer -=3;// magic number - width of 'var'
-								}
-								else 
-								if (expect("_inline").isFound()) {
-									while (!expect("end_var").isFound()) {
-									expectWordForce("variable name or 'end_var'").execute(
-											p3 -> {
-												if (isKeyword(p3.word)) {
-													logFatal("variable name", "keyword " + p3.word);
-												}
-												InlineVariable var = new InlineVariable(p3.word,fb);
-												expectForce(":").execute(
-														p4 -> {
-															expectOneOfForce(
-																	ApplcationConfig
-																			.getVariableTypes(),
-																	"variable type").execute(
-																	p5 -> {
-																		var.setType(p5.word);
-																		expectForce(";").execute(
-																				p6 -> {
-																					fb.inline.add(var);
-																				});
-																	});
-														});
-											});
-									}
-								}
-							});
-					expectForce("var_output").execute(
-							p2-> {
-								while (!expect("end_var").isFound()) {
-									
-									expectWordForce("variable name or 'end_var'").execute(
-											p3 -> {
-												if (isKeyword(p3.word)) {
-													logFatal("variable name", "keyword " + p3.word);
-												}
-												OutputVariable var = new OutputVariable(p3.word,fb);
-												expectForce(":").execute(
-														p4 -> {
-															expectOneOfForce(
-																	ApplcationConfig
-																			.getVariableTypes(),
-																	"variable type").execute(
-																	p5 -> {
-																		var.setType(p5.word);
-																		expectForce(";").execute(
-																				p6 -> {
-																					fb.output.add(var);
-																				});
-																	});
-														});
-											});
-								}
-							});
+					this.parseInputVariables(fb);
+					this.parseInlineVariables(fb);
+					this.parseOutputVariables(fb);
 					expectForce("fuzzify").execute(
 							p2-> {
 								do {
@@ -330,6 +275,72 @@ public class Parser extends ParserBase {
 		}
 		this.app.logger=this.logger;
 	}
+
+	private void parseOutputVariables(FunctionBlock fb) {
+		expectForce("var_output").execute(
+				p2-> {
+					while (!expect("end_var").isFound()) {
+						
+						expectWordForce("variable name or 'end_var'").execute(
+								p3 -> {
+									if (isKeyword(p3.word)) {
+										logFatal("variable name", "keyword " + p3.word);
+									}
+									OutputVariable var = new OutputVariable(p3.word,fb);
+									expectForce(":").execute(
+											p4 -> {
+												expectOneOfForce(
+														ApplcationConfig
+																.getVariableTypes(),
+														"variable type").execute(
+														p5 -> {
+															var.setType(p5.word);
+															expectForce(";").execute(
+																	p6 -> {
+																		fb.output.add(var);
+																	});
+														});
+											});
+								});
+					}
+				});
+		
+	}
+
+	private void parseInlineVariables(FunctionBlock fb) {
+		expect("var").execute(
+				p2-> {
+					if (expect ("_output").isFound()) {
+						rollbackPointer();
+						pointer -=3;// magic number - width of 'var'
+					}
+					else 
+					if (expect("_inline").isFound()) {
+						while (!expect("end_var").isFound()) {
+						expectWordForce("variable name or 'end_var'").execute(
+								p3 -> {
+									if (isKeyword(p3.word)) {
+										logFatal("variable name", "keyword " + p3.word);
+									}
+									InlineVariable var = new InlineVariable(p3.word,fb);
+									expectForce(":").execute(
+											p4 -> {
+												expectOneOfForce(
+														ApplcationConfig
+																.getVariableTypes(),
+														"variable type").execute(
+														p5 -> {
+															var.setType(p5.word);
+															expectForce(";").execute(
+																	p6 -> {
+																		fb.inline.add(var);
+																	});
+														});
+											});
+								});
+						}
+					}
+				});	}
 
 	public Application getApplication() {
 		return this.app;

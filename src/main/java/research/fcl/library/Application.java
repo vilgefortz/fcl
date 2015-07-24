@@ -95,5 +95,8 @@ public class Application {
 			return null;
 		}
 	}
+	public void addFunctionBlock(FunctionBlock fb) {
+		this.functionBlocks.add(fb);
+	}
 }
 

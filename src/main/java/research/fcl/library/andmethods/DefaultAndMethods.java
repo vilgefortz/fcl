@@ -23,21 +23,9 @@ public class DefaultAndMethods extends ArrayList<AndMethod> {
 		}
 
 	}
-	public static final AndMethod MIN = new AndMethod () {
-		{
-			this.name="min";
-		}
-		@Override
-		public double and(double a, double b) {
-			return Math.min(a, b);
-		}
-		@Override
-		public double or(double a, double b) {
-			return Math.max(a, b);
-		}
-		
-	};
+	
 	public DefaultAndMethods () {
-		this.add(MIN);
+		this.add(new MinMethod());
+		this.add(new ProdMethod());
 	}
 }
