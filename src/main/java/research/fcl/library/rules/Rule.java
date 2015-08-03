@@ -81,6 +81,13 @@ public class Rule implements Serializable{
 	public List<BaseFunctionVariable> getAffected() {
 		return this.affected;
 	}
+	public void calculate() {
+		double activation = this.getCause().getAction().getValue();
+		if (activation > 0)
+			this.getEffects().forEach(e -> {
+				e.execute(activation);
+			});
+	}
 
 	
 }

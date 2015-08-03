@@ -145,11 +145,7 @@ public class BaseFunctionVariable implements Observer,Serializable {
 		l.info("All rules to calculate : " + rules.size());
 
 		rules.forEach(r -> {
-			double activation = r.getCause().getAction().getValue();
-			if (activation > 0)
-				r.getEffects().forEach(e -> {
-					e.execute(activation);
-				});
+			r.calculate();
 		});
 		dependend.forEach(v -> {
 			try {

@@ -98,5 +98,8 @@ public class Application {
 	public void addFunctionBlock(FunctionBlock fb) {
 		this.functionBlocks.add(fb);
 	}
+	public TermFactory getTermFactory() {
+		return this.termFactory;
+	}
 }
 

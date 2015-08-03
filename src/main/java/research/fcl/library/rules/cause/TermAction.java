@@ -22,6 +22,6 @@ public class TermAction extends Action {
 	@Override
 	public double getValue() {
 		return term.fun(var.getValue());
-	}
+	}	
 
 }
