@@ -9,6 +9,7 @@ import research.fcl.library.rules.cause.Action;
 import research.fcl.library.rules.cause.AndAction;
 import research.fcl.library.rules.cause.OrAction;
 import research.fcl.library.rules.cause.TermAction;
+import research.fcl.library.rules.modifiers.DefaultModifierFactory;
 import research.fcl.library.rules.modifiers.Modifier;
 import research.fcl.library.rules.modifiers.ModifierFactory;
 import research.fcl.library.terms.Term;

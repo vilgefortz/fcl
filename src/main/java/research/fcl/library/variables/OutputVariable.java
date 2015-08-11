@@ -51,7 +51,7 @@ public class OutputVariable extends BaseFunctionVariable  {
 	public void setDefuzzificationMethod(String method) throws DefuzzificationMethodNotRecognisedException {
 		this.deffMethod = this.fb.getApp().getDefuzzificationMethod(method);
 		
-	}
+	}	
 	private static Logger l = Logger.getGlobal();
 	public void calculateValue() {
 		if (this.acculist.size()==0) {

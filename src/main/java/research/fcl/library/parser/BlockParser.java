@@ -32,14 +32,14 @@ public class BlockParser extends ParserBase {
 										 "rule or settings").execute(p4-> {
 									if (p4.word.equalsIgnoreCase("and")) {
 										expectForce(":").execute(p5->{
-											expectOneOfForce(app.getAndMethodsNames(), "and methods").execute(p6->{
+											expectOneOfForce(app.getAndMethodsFactory().getNames(), "and methods").execute(p6->{
 												String methodName = p6.word;
 												if (isKeyword(methodName)) {
 													logFatal("and method name", "keyword " + methodName);
 												}
 												expectForce(";").execute(p7->{
 													try {
-														rb.setAndMethod (app.getAndMethod(methodName));
+														rb.setAndMethod (app.getAndMethodsFactory().getMethod(methodName));
 													} catch (Exception e) {
 														this.rollbackPointer();
 														logFatal (e.getMessage());
@@ -102,7 +102,7 @@ public class BlockParser extends ParserBase {
 										 expectForce (":=").execute(p6->{
 											 expectRegForce("(?s).*?;", "term definition").execute(p7-> {
 												 try {
-													var.addTerm (this.app.termFactory.generateTerm (termName,p7.word));
+													var.addTerm (this.app.getTermFactory().generateTerm (termName,p7.word));
 												} catch (Exception e) {
 													this.rollbackPointer();
 													logFatal (e.getMessage());
@@ -114,7 +114,7 @@ public class BlockParser extends ParserBase {
 									 }
 									 if (p4.word.equalsIgnoreCase("accu")) {
 										 expectForce (":").execute(p6->{ 
-											 expectOneOfForce(app.getAccuMethodsNames(), "Accumulation method").execute(p7 -> {
+											 expectOneOfForce(app.getAccumulationMethodsFactory().getNames(), "Accumulation method").execute(p7 -> {
 												 String method = p7.word;
 												 expectForce(";").execute(
 															p8 -> {
@@ -131,7 +131,7 @@ public class BlockParser extends ParserBase {
 									 }
 									 if (p4.word.equalsIgnoreCase("method")) {
 										 expectForce (":").execute(p6->{ 
-											 expectOneOfForce(app.getDeffuMethodsNames(), "Defuzzification method").execute(p7 -> {
+											 expectOneOfForce(app.getDefuzzificationMethodsFactory().getNames(), "Defuzzification method").execute(p7 -> {
 												 String method = p7.word;
 												 expectForce(";").execute(
 															p8 -> {

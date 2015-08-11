@@ -16,12 +16,12 @@ public class Ruleblock {
 	List<Rule> rules = new ArrayList<Rule> ();
 	@Expose
 	private String name;
-	public DefaultRuleFactory ruleFactory; 
+	public RuleFactory ruleFactory; 
 	private AndMethod andMethod = new MinMethod();
 	
 	public Ruleblock (FunctionBlock fb) {
 		this.functionBlock = fb;
-		ruleFactory = new DefaultRuleFactory(this);
+		ruleFactory = this.functionBlock.getApp().getRuleFactory (this);
 	}
 	
 	public void setName(String ruleBlockName) {
