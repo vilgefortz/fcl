@@ -122,6 +122,9 @@ public class Application {
 	public ModifierFactory getModifierFactory() {
 		return modifierFactory;
 	}
+	public void setModififierFactory (ModifierFactory mf) {
+		this.modifierFactory=mf;
+	}
 	public DefaultActionFactory getActionFactory(Ruleblock rb) {
 		return new DefaultActionFactory(rb,this.getModifierFactory());
 	}

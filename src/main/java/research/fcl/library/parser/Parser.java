@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import research.fcl.library.Application;
 import research.fcl.library.functionblock.FunctionBlock;
-import research.fcl.library.variables.InputVariable;
 
 public class Parser extends BlockParser {
 	public Parser() {
@@ -29,35 +28,6 @@ public class Parser extends BlockParser {
 		if (document != null)
 			doc = document.toCharArray();
 		log("Opened file " + file.getAbsolutePath() + ", content:\n" + document);
-	}
-	public void parseInputVariables (FunctionBlock fb) {
-		expectForce("var_input").execute(
-				p2-> {
-					while (!expect("end_var").isFound()) {
-						expectWordForce("variable name or 'end_var'").execute(
-								p3 -> {
-									if (isKeyword(p3.word)) {
-										logFatal("variable name", "keyword " + p3.word);
-									}
-									InputVariable var = new InputVariable(p3.word,fb);
-									expectForce(":").execute(
-											p4 -> {
-												expectOneOfForce(
-														ApplcationConfig
-																.getVariableTypes(),
-														"variable type").execute(
-														p5 -> {
-															var.setType(p5.word);
-															expectForce(";").execute(
-																	p6 -> {
-																		fb.input.add(var);
-																	});
-														});
-											});
-								});
-					}
-				});
-
 	}
 	public void parse() {
 		try {
@@ -92,7 +62,4 @@ public class Parser extends BlockParser {
 		this.app.logger=this.logger;
 	}
 
-	public Application getApplication() {
-		return this.app;
-	}
 }

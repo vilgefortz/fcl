@@ -87,7 +87,5 @@ public class Rule implements Serializable{
 			this.getEffects().forEach(e -> {
 				e.execute(activation);
 			});
-	}
-
-	
+	}	
 }

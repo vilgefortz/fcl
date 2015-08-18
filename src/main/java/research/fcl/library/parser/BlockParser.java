@@ -4,6 +4,7 @@ import research.fcl.library.functionblock.FunctionBlock;
 import research.fcl.library.rules.Ruleblock;
 import research.fcl.library.variables.BaseFunctionVariable;
 import research.fcl.library.variables.InlineVariable;
+import research.fcl.library.variables.InputVariable;
 import research.fcl.library.variables.OutputVariable;
 
 public class BlockParser extends ParserBase {
@@ -271,5 +272,35 @@ public class BlockParser extends ParserBase {
 					}
 				}
 			}); 	}
+
+	public void parseInputVariables(FunctionBlock fb) {
+		expectForce("var_input").execute(
+				p2-> {
+					while (!expect("end_var").isFound()) {
+						expectWordForce("variable name or 'end_var'").execute(
+								p3 -> {
+									if (isKeyword(p3.word)) {
+										logFatal("variable name", "keyword " + p3.word);
+									}
+									InputVariable var = new InputVariable(p3.word,fb);
+									expectForce(":").execute(
+											p4 -> {
+												expectOneOfForce(
+														ApplcationConfig
+																.getVariableTypes(),
+														"variable type").execute(
+														p5 -> {
+															var.setType(p5.word);
+															expectForce(";").execute(
+																	p6 -> {
+																		fb.input.add(var);
+																	});
+														});
+											});
+								});
+					}
+				});
+	
+	}
 
 }

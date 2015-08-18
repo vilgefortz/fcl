@@ -22,18 +22,24 @@ public class ParserBase {
 		this.pointer = pointer;
 	}
 
-	public Application app = new Application();
+	public Application app;
 	public boolean done = false;
 	public String word;
 	public ParserLogger logger = new ParserLogger();
 	public boolean fatalState;
 	private int lastPointer;
 
-	{
+	public ParserBase() {
+		this.app = this.createApplication();
 		this.app.setParser (this);
 	}
-	public ParserBase() {
-		
+
+	public Application getApplication() {
+		if (this.app!=null) return app;
+		return this.app=this.createApplication();
+	}
+	public Application createApplication () {
+		return new Application ();
 	}
 
 	public void logInfo(String exp, String found) {
