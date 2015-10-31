@@ -43,6 +43,7 @@ public class VarPoints3DDTO {
 		}
 		for (int i=0; i<resolution; i++) {
 			for (int j=0; j<resolution; j++) {
+				System.out.println("z " + i + " "+ j + ", x=" + x[i][j] + ", y=" + y[i][j]);
 				ivars[0].setValue(x[i][j]);
 				ivars[1].setValue(y[i][j]);
 				z[i][j] = ovar.getValue();

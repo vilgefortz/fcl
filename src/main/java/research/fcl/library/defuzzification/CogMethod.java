@@ -34,9 +34,9 @@ public class CogMethod extends DefuzzificationMethod {
 		double min = /*temp.getMin()==temp.getMax()? var.getMin() :*/ temp.getMin();
 		double max = /*temp.getMin()==temp.getMax()? var.getMax() :*/ temp.getMax();
 		log.info ("Counting simpson for " + var.getName() + " min : " + temp.getMin() + " max : " + temp.getMax() );
-		double a = u.integrate(Integer.MAX_VALUE, v->{return v*temp.fun(v)*1000;}, min , max);
+		double a = u.integrate(10000, v->{return v*temp.fun(v)*1000;}, min , max);
 		log.info ("a : " + a );
-		double b = l.integrate(Integer.MAX_VALUE, v->{return temp.fun(v)*1000;}, min , max);
+		double b = l.integrate(10000, v->{return temp.fun(v)*1000;}, min , max);
 		log.info ("b : " + b );
 		log.info ("Calculated value : " + a/b);
 		return b!=0?a/b:var.getValue(); 	

@@ -1,4 +1,4 @@
- package research.fcl.webapp;
+package research.fcl.webapp;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -39,10 +39,9 @@ public class App extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		doPost (request,response);
+		doPost(request, response);
 	}
 
-	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -53,27 +52,29 @@ public class App extends HttpServlet {
 		String actionString = request.getParameter("action");
 		PrintWriter pw = response.getWriter();
 		Application app = (Application) session.getAttribute("app");
-		synchronized (app) {
-		if (app==null) {
+		if (app == null) {
 			pw.print("false");
 			return;
 		}
-		Map<String,ApplicationResponseAction> dispatchMap = new HashMap<String,ApplicationResponseAction> ();
-		
-		dispatchMap.put ("setVariable", Variables::setVariable);
-		dispatchMap.put ("getErrorLog", LoggerEndpoint::getErrorLog);
-		dispatchMap.put ("getEnviroment", Variables::getEnviroment);
-		dispatchMap.put ("getTreeData", Tree::getTreeData);
-		dispatchMap.put ("getTermsData", TermEndpoint::getTerms);
-		dispatchMap.put ("getVariables", Variables::getVariables);
-		dispatchMap.put ("remove-var", Variables::removeVariable);
-		dispatchMap.put ("getTerms", Variables::getTerms);
-		dispatchMap.put ("getVariableFunction", Variables::getVariableFunction);
-		dispatchMap.put ("getVariable3DFunction", Variables::getVariable3DFunction);
-		ApplicationResponseAction action = dispatchMap.get(actionString);
-		if (action != null) pw.write(action.action(request, response, app));
-		else pw.write("404");
-		}
-	}
+		Map<String, ApplicationResponseAction> dispatchMap = new HashMap<String, ApplicationResponseAction>();
 
+		dispatchMap.put("setVariable", Variables::setVariable);
+		dispatchMap.put("getErrorLog", LoggerEndpoint::getErrorLog);
+		dispatchMap.put("getEnviroment", Variables::getEnviroment);
+		dispatchMap.put("getTreeData", Tree::getTreeData);
+		dispatchMap.put("getTermsData", TermEndpoint::getTerms);
+		dispatchMap.put("getVariables", Variables::getVariables);
+		dispatchMap.put("remove-var", Variables::removeVariable);
+		dispatchMap.put("getTerms", Variables::getTerms);
+		dispatchMap.put("getVariableFunction", Variables::getVariableFunction);
+		dispatchMap.put("getVariable3DFunction",
+				Variables::getVariable3DFunction);
+		ApplicationResponseAction action = dispatchMap.get(actionString);
+		//synchronized (app) {
+			if (action != null)
+				pw.write(action.action(request, response, app));
+			else
+				pw.write("404");
+		//}
+	}
 }
