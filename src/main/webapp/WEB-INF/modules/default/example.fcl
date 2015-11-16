@@ -1,3 +1,5 @@
+
+				
 FUNCTION_BLOCK Fuzzy_FB
 	VAR_INPUT
 		wilgotnosc: REAL;
@@ -7,15 +9,15 @@ FUNCTION_BLOCK Fuzzy_FB
 		zraszanie : REAL;
 	END_VAR
 	FUZZIFY temperatura
-		TERM bardzo_niska := (-15,1) (5,1) (13,0);
-		TERM niska := (2, 0) (10, 1) (18, 0);
-		TERM srednia := (10, 0) (18, 1) (26,0);
-		TERM wysoka := (17,0) (25, 1) (40, 1);
+		TERM bardzo_niska := (-15,1) (0,1) (10,0);
+		TERM niska := (0, 0) (10, 1) (20, 0);
+		TERM srednia := (10, 0) (20, 1) (30,0);
+		TERM wysoka := (20,0) (30, 1) (40, 1);
 	END_FUZZIFY
 	FUZZIFY wilgotnosc
-		TERM niska := (0, 1) (20, 1) (35, 0);
-		TERM srednia := (10, 0) (30, 1) (60,0);
-		TERM duza := (40,0) (70, 1) (100, 1);
+		TERM niska := (0, 1) (20, 1) (30, 0);
+		TERM srednia := (20, 0) (40, 1) (50,0);
+		TERM duza := (40,0) (60, 1) (100, 1);
 	END_FUZZIFY
 	DEFUZZIFY zraszanie
 		TERM brak := 0;
@@ -41,3 +43,4 @@ and temperatura is bardzo_niska then zraszanie is brak;
 		AND : prod;
 	END_RULEBLOCK
 END_FUNCTION_BLOCK
+			
